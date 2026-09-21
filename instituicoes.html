@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instituições · Sistema de Captação</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Voltar ao painel</a>
+
+<h1>🏛️ Instituições</h1>
+<p class="subtitle">Cadastro de instituições e pasta viva</p>
+
+<div id="listaView">
+  <div class="section-title">
+    <h2>Instituições cadastradas <span class="count-badge" id="contador">0</span></h2>
+    <button class="btn-primary" onclick="novoRegistro()">+ Nova instituição</button>
+  </div>
+  <div id="lista"></div>
+</div>
+
+<div id="formView" class="hidden">
+  <div class="section-title">
+    <h2 id="formTitulo">Nova instituição</h2>
+    <button class="btn-secondary" onclick="voltarParaLista()">← Voltar</button>
+  </div>
+
+  <form id="instituicoesForm">
+    <h2>Identificação</h2>
+    <div class="field">
+      <label for="nome">Nome da instituição</label>
+      <input type="text" id="nome" name="nome">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="cnpj">CNPJ</label>
+        <input type="text" id="cnpj" name="cnpj">
+      </div>
+      <div class="field">
+        <label for="tipoJuridico">Tipo jurídico</label>
+        <select id="tipoJuridico" name="tipoJuridico">
+          <option value="">Selecione</option>
+          <option value="OSC">OSC</option>
+          <option value="Associação">Associação</option>
+          <option value="Fundação">Fundação</option>
+          <option value="Coletivo">Coletivo</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="dataFundacao">Data de fundação</label>
+        <input type="date" id="dataFundacao" name="dataFundacao">
+      </div>
+      <div class="field">
+        <label for="causa">Causa/Área</label>
+        <select id="causa" name="causa">
+          <option value="">Selecione</option>
+          <option value="Cultura">Cultura</option>
+          <option value="Educação">Educação</option>
+          <option value="Saúde">Saúde</option>
+          <option value="Esporte">Esporte</option>
+          <option value="Meio ambiente">Meio ambiente</option>
+          <option value="Social">Social</option>
+        </select>
+      </div>
+    </div>
+
+    <h2>Endereço</h2>
+    <div class="row">
+      <div class="field">
+        <label for="estado">Estado</label>
+        <input type="text" id="estado" name="estado">
+      </div>
+      <div class="field">
+        <label for="municipio">Município</label>
+        <input type="text" id="municipio" name="municipio">
+      </div>
+    </div>
+    <div class="field">
+      <label for="endereco">Endereço completo</label>
+      <input type="text" id="endereco" name="endereco">
+    </div>
+
+    <h2>Contato</h2>
+    <div class="row">
+      <div class="field">
+        <label for="telefone">Telefone</label>
+        <input type="text" id="telefone" name="telefone">
+      </div>
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input type="text" id="email" name="email">
+      </div>
+    </div>
+    <div class="field">
+      <label for="site">Site</label>
+      <input type="url" id="site" name="site">
+    </div>
+
+    <h2>Pasta Viva (Documentos)</h2>
+    <div class="checkbox-group">
+      <input type="checkbox" id="estatuto" name="estatuto">
+      <label for="estatuto">Estatuto social</label>
+    </div>
+    <div class="field">
+      <label for="validadeEstatuto">Validade do estatuto</label>
+      <input type="date" id="validadeEstatuto" name="validadeEstatuto">
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="cnpjAtivo" name="cnpjAtivo">
+      <label for="cnpjAtivo">CNPJ ativo</label>
+    </div>
+    <div class="field">
+      <label for="dataCnpj">Data do comprovante CNPJ</label>
+      <input type="date" id="dataCnpj" name="dataCnpj">
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="cndFederal" name="cndFederal">
+      <label for="cndFederal">CND Federal</label>
+    </div>
+    <div class="field">
+      <label for="validadeCndFederal">Validade CND Federal</label>
+      <input type="date" id="validadeCndFederal" name="validadeCndFederal">
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="cndEstadual" name="cndEstadual">
+      <label for="cndEstadual">CND Estadual</label>
+    </div>
+    <div class="field">
+      <label for="validadeCndEstadual">Validade CND Estadual</label>
+      <input type="date" id="validadeCndEstadual" name="validadeCndEstadual">
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="cndMunicipal" name="cndMunicipal">
+      <label for="cndMunicipal">CND Municipal</label>
+    </div>
+    <div class="field">
+      <label for="validadeCndMunicipal">Validade CND Municipal</label>
+      <input type="date" id="validadeCndMunicipal" name="validadeCndMunicipal">
+    </div>
+    <div class="alert">
+      <strong>⚠️ Atenção:</strong>
+      <ul>
+        <li>Certidões vencidas eliminam a proposta antes da análise de mérito</li>
+        <li>Mantenha uma pasta por instituição com os documentos</li>
+      </ul>
+    </div>
+
+    <h2>Status</h2>
+    <div class="status-bar" id="statusBar">
+      <span class="status-chip" data-status="Prospectada">Prospectada</span>
+      <span class="status-chip" data-status="Em contato">Em contato</span>
+      <span class="status-chip" data-status="Contratada">Contratada</span>
+      <span class="status-chip" data-status="Inativa">Inativa</span>
+    </div>
+
+    <h2>Observações</h2>
+    <div class="field">
+      <textarea id="observacoes" name="observacoes" placeholder="Pontos fortes, histórico, notas..."></textarea>
+    </div>
+  </form>
+
+  <div class="actions">
+    <button type="button" class="btn-primary" onclick="salvar()">💾 Salvar</button>
+    <button type="button" class="btn-secondary" onclick="voltarParaLista()">Cancelar</button>
+  </div>
+</div>
+
+<div class="actions" id="acoesGlobais">
+  <button type="button" class="btn-secondary" onclick="exportarTudo()">📤 Exportar JSON</button>
+  <button type="button" class="btn-secondary" onclick="document.getElementById('importFile').click()">📥 Importar JSON</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importar(event)">
+</div>
+
+<div class="saved-indicator" id="savedIndicator">✓ Salvo</div>
+
+<script>
+let lista = [];
+let indiceAtual = -1;
+
+function carregar() {
+  lista = JSON.parse(localStorage.getItem('instituicoes') || '[]');
+  renderizarLista();
+}
+
+function salvarLista() {
+  localStorage.setItem('instituicoes', JSON.stringify(lista));
+}
+
+function renderizarLista() {
+  document.getElementById('contador').textContent = lista.length;
+  const div = document.getElementById('lista');
+  if (lista.length === 0) {
+    div.innerHTML = '<p class="empty-state">Nenhuma instituição cadastrada ainda.</p>';
+    return;
+  }
+  div.innerHTML = lista.map((i, idx) => `
+    <div class="card">
+      <h3>${i.nome || 'Sem nome'}</h3>
+      <p><strong>CNPJ:</strong> ${i.cnpj || '-'}</p>
+      <p><strong>Município:</strong> ${i.municipio || '-'}</p>
+      <p><strong>Status:</strong> ${i.status || '-'}</p>
+      <div class="card-actions">
+        <button class="btn-secondary" onclick="editar(${idx})">Editar</button>
+        <button class="btn-danger" onclick="excluir(${idx})">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function novoRegistro() {
+  indiceAtual = -1;
+  document.getElementById('formTitulo').textContent = 'Nova instituição';
+  document.getElementById('instituicoesForm').reset();
+  document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+  document.getElementById('acoesGlobais').classList.add('hidden');
+}
+
+function editar(i) {
+  indiceAtual = i;
+  const inst = lista[i];
+  document.getElementById('formTitulo').textContent = 'Editar instituição';
+  const form = document.getElementById('instituicoesForm');
+  form.reset();
+  Object.keys(inst).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) {
+      if (el.type === 'checkbox') el.checked = inst[key];
+      else el.value = inst[key];
+    }
+  });
+  atualizarStatus(inst.status);
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+  document.getElementById('acoesGlobais').classList.add('hidden');
+}
+
+function excluir(i) {
+  if (confirm('Tem certeza? Isso apaga esta instituição permanentemente.')) {
+    lista.splice(i, 1);
+    salvarLista();
+    renderizarLista();
+  }
+}
+
+function voltarParaLista() {
+  document.getElementById('listaView').classList.remove('hidden');
+  document.getElementById('formView').classList.add('hidden');
+  document.getElementById('acoesGlobais').classList.remove('hidden');
+  renderizarLista();
+}
+
+function salvar() {
+  const form = document.getElementById('instituicoesForm');
+  const dados = {};
+  new FormData(form).forEach((value, key) => { dados[key] = value; });
+  form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    dados[cb.id] = cb.checked;
+  });
+  const activeChip = document.querySelector('.status-chip.active');
+  if (activeChip) dados.status = activeChip.dataset.status;
+
+  if (indiceAtual === -1) lista.push(dados);
+  else lista[indiceAtual] = dados;
+  salvarLista();
+  const ind = document.getElementById('savedIndicator');
+  ind.classList.add('show');
+  setTimeout(() => ind.classList.remove('show'), 1500);
+  setTimeout(() => voltarParaLista(), 800);
+}
+
+function atualizarStatus(status) {
+  document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+  const chip = document.querySelector(`.status-chip[data-status="${status}"]`);
+  if (chip) chip.classList.add('active');
+}
+
+document.querySelectorAll('.status-chip').forEach(chip => {
+  chip.addEventListener('click', () => atualizarStatus(chip.dataset.status));
+});
+
+function exportarTudo() {
+  const dados = JSON.stringify(lista, null, 2);
+  const blob = new Blob([dados], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'instituicoes-backup.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importar(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const dados = JSON.parse(e.target.result);
+      if (Array.isArray(dados)) {
+        if (confirm(`Importar ${dados.length} instituições?`)) {
+          lista = lista.concat(dados);
+          salvarLista();
+          renderizarLista();
+        }
+      } else {
+        if (confirm('Importar esta instituição?')) {
+          lista.push(dados);
+          salvarLista();
+          renderizarLista();
+        }
+      }
+    } catch (err) {
+      alert('Arquivo inválido.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+const params = new URLSearchParams(window.location.search);
+if (params.has('editar')) editar(parseInt(params.get('editar')));
+
+carregar();
+</script>
+
+</body>
+</html>

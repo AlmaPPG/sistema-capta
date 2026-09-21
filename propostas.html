@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propostas · Sistema de Captação</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Voltar ao painel</a>
+
+<h1>📝 Propostas</h1>
+<p class="subtitle">Adaptação de conceitos para editais</p>
+
+<div id="listaView">
+  <div class="section-title">
+    <h2>Propostas cadastradas <span class="count-badge" id="contador">0</span></h2>
+    <button class="btn-primary" onclick="novoRegistro()">+ Nova proposta</button>
+  </div>
+  <div id="lista"></div>
+</div>
+
+<div id="formView" class="hidden">
+  <div class="section-title">
+    <h2 id="formTitulo">Nova proposta</h2>
+    <button class="btn-secondary" onclick="voltarParaLista()">← Voltar</button>
+  </div>
+
+  <form id="propostasForm">
+    <h2>Identificação</h2>
+    <div class="field">
+      <label for="nome">Nome da proposta</label>
+      <input type="text" id="nome" name="nome" placeholder="Ex: Leitura para Todos - Edital Cultura 2026">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="conceito">Conceito vinculado</label>
+        <input type="text" id="conceito" name="conceito" placeholder="Nome do conceito">
+      </div>
+      <div class="field">
+        <label for="edital">Edital vinculado</label>
+        <input type="text" id="edital" name="edital" placeholder="Nome do edital">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="instituicoes">Instituições vinculadas</label>
+        <input type="text" id="instituicoes" name="instituicoes" placeholder="Separe por vírgula">
+      </div>
+      <div class="field">
+        <label for="contatos">Contatos envolvidos</label>
+        <input type="text" id="contatos" name="contatos" placeholder="Separe por vírgula">
+      </div>
+    </div>
+
+    <h2>Território e Elegibilidade</h2>
+    <div class="field">
+      <label for="territorio">Território de execução</label>
+      <input type="text" id="territorio" name="territorio">
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="elegivel" name="elegivel">
+      <label for="elegivel">Instituição elegível?</label>
+    </div>
+    <div class="alert">
+      <strong>⚠️ O que reprova:</strong>
+      <ul>
+        <li>Projeto executado em município fora da lista</li>
+        <li>Instituição com menos tempo de existência</li>
+      </ul>
+    </div>
+
+    <h2>Prazos</h2>
+    <div class="row">
+      <div class="field">
+        <label for="prazoInscricao">Prazo final de inscrição</label>
+        <input type="date" id="prazoInscricao" name="prazoInscricao">
+      </div>
+      <div class="field">
+        <label for="validadeCertidoes">Validade das certidões até</label>
+        <input type="date" id="validadeCertidoes" name="validadeCertidoes">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="dataEnvio">Data de envio efetiva</label>
+        <input type="date" id="dataEnvio" name="dataEnvio">
+      </div>
+      <div class="field">
+        <label for="datasIntermediarias">Datas intermediárias</label>
+        <input type="text" id="datasIntermediarias" name="datasIntermediarias">
+      </div>
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="folga" name="folga">
+      <label for="folga">Enviado com 2 dias de folga?</label>
+    </div>
+
+    <h2>Formato de Envio</h2>
+    <div class="row">
+      <div class="field">
+        <label for="tipoEnvio">Tipo de envio</label>
+        <select id="tipoEnvio" name="tipoEnvio">
+          <option value="">Selecione</option>
+          <option value="Sistema">Sistema eletrônico</option>
+          <option value="E-mail">E-mail</option>
+          <option value="Físico">Protocolo físico</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="tipoAssinatura">Tipo de assinatura</label>
+        <select id="tipoAssinatura" name="tipoAssinatura">
+          <option value="">Selecione</option>
+          <option value="Simples">Simples</option>
+          <option value="Digital">Digital com certificado</option>
+          <option value="Cartório">Cartório</option>
+        </select>
+      </div>
+    </div>
+
+    <h2>Contrapartida</h2>
+    <div class="row">
+      <div class="field">
+        <label for="tipoContrapartida">Tipo de contrapartida</label>
+        <select id="tipoContrapartida" name="tipoContrapartida">
+          <option value="">Selecione</option>
+          <option value="Financeira">Financeira</option>
+          <option value="Econômica">Econômica</option>
+          <option value="Mista">Mista</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="percentualContrapartida">Percentual ou valor exigido</label>
+        <input type="text" id="percentualContrapartida" name="percentualContrapartida">
+      </div>
+    </div>
+    <div class="field">
+      <label for="comoComprovar">Como comprovar</label>
+      <textarea id="comoComprovar" name="comoComprovar"></textarea>
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="contrapartidaComprovada" name="contrapartidaComprovada">
+      <label for="contrapartidaComprovada">Contrapartida comprovada?</label>
+    </div>
+
+    <h2>Rubricas</h2>
+    <div class="checkbox-group">
+      <input type="checkbox" id="rubricaAceita" name="rubricaAceita">
+      <label for="rubricaAceita">Rubrica de elaboração/captação aceita?</label>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="nomeRubrica">Nome da rubrica no edital</label>
+        <input type="text" id="nomeRubrica" name="nomeRubrica">
+      </div>
+      <div class="field">
+        <label for="percMaxRubrica">Percentual máximo (%)</label>
+        <input type="number" id="percMaxRubrica" name="percMaxRubrica">
+      </div>
+    </div>
+
+    <h3>Suas rubricas de serviço</h3>
+    <div class="row">
+      <div class="field">
+        <label for="valorIdentidade">Identidade visual (R$)</label>
+        <input type="number" id="valorIdentidade" name="valorIdentidade" step="0.01">
+      </div>
+      <div class="field">
+        <label for="valorFotografia">Fotografia (R$)</label>
+        <input type="number" id="valorFotografia" name="valorFotografia" step="0.01">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="valorTextos">Textos (R$)</label>
+        <input type="number" id="valorTextos" name="valorTextos" step="0.01">
+      </div>
+      <div class="field">
+        <label for="valorOutros">Outros serviços (R$)</label>
+        <input type="number" id="valorOutros" name="valorOutros" step="0.01">
+      </div>
+    </div>
+    <div class="field">
+      <label for="valorRubricaElaboracao">Valor da rubrica de elaboração (R$)</label>
+      <input type="number" id="valorRubricaElaboracao" name="valorRubricaElaboracao" step="0.01">
+    </div>
+
+    <div class="total-box">
+      <strong id="totalRubricas">R$ 0,00</strong> — Soma das suas rubricas
+    </div>
+
+    <h2>Orçamento</h2>
+    <div class="row">
+      <div class="field">
+        <label for="teto">Teto por proposta (R$)</label>
+        <input type="number" id="teto" name="teto" step="0.01">
+      </div>
+      <div class="field">
+        <label for="valorSolicitado">Valor total solicitado (R$)</label>
+        <input type="number" id="valorSolicitado" name="valorSolicitado" step="0.01">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="formaLiberacao">Forma de liberação</label>
+        <select id="formaLiberacao" name="formaLiberacao">
+          <option value="">Selecione</option>
+          <option value="Parcela única">Parcela única</option>
+          <option value="Etapas">Por etapas</option>
+          <option value="Reembolso">Reembolso</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="limitePropostas">Limite de propostas por instituição</label>
+        <input type="number" id="limitePropostas" name="limitePropostas">
+      </div>
+    </div>
+
+    <h2>Peças do Projeto</h2>
+    <h3>Bloco 1: O que é o projeto</h3>
+    <div class="field">
+      <label for="titulo">Título</label>
+      <input type="text" id="titulo" name="titulo">
+    </div>
+    <div class="field">
+      <label for="resumo">Resumo (7 blocos)</label>
+      <textarea id="resumo" name="resumo"></textarea>
+    </div>
+    <div class="field">
+      <label for="objeto">Objeto</label>
+      <textarea id="objeto" name="objeto"></textarea>
+    </div>
+    <div class="field">
+      <label for="objetivos">Objetivos</label>
+      <textarea id="objetivos" name="objetivos"></textarea>
+    </div>
+    <div class="field">
+      <label for="justificativa">Justificativa</label>
+      <textarea id="justificativa" name="justificativa"></textarea>
+    </div>
+
+    <h3>Bloco 2: Como o projeto acontece</h3>
+    <div class="field">
+      <label for="metodologia">Metodologia</label>
+      <textarea id="metodologia" name="metodologia"></textarea>
+    </div>
+    <div class="field">
+      <label for="cronogramaTexto">Cronograma</label>
+      <textarea id="cronogramaTexto" name="cronogramaTexto"></textarea>
+    </div>
+    <div class="field">
+      <label for="equipeTexto">Equipe</label>
+      <textarea id="equipeTexto" name="equipeTexto"></textarea>
+    </div>
+    <div class="field">
+      <label for="parcerias">Parcerias e apoios</label>
+      <textarea id="parcerias" name="parcerias"></textarea>
+    </div>
+
+    <h3>Bloco 3: Quanto custa e de onde vem</h3>
+    <div class="field">
+      <label for="orcamentoDetalhado">Orçamento detalhado</label>
+      <textarea id="orcamentoDetalhado" name="orcamentoDetalhado"></textarea>
+    </div>
+    <div class="field">
+      <label for="contrapartidaFontes">Contrapartida e outras fontes</label>
+      <textarea id="contrapartidaFontes" name="contrapartidaFontes"></textarea>
+    </div>
+    <div class="field">
+      <label for="prestacaoContas">Prestação de contas</label>
+      <textarea id="prestacaoContas" name="prestacaoContas"></textarea>
+    </div>
+
+    <h3>Bloco 4: Como se prova que funcionou</h3>
+    <div class="field">
+      <label for="metasIndicadores">Metas e indicadores</label>
+      <textarea id="metasIndicadores" name="metasIndicadores"></textarea>
+    </div>
+    <div class="field">
+      <label for="monitoramento">Monitoramento e avaliação</label>
+      <textarea id="monitoramento" name="monitoramento"></textarea>
+    </div>
+    <div class="field">
+      <label for="sustentabilidade">Sustentabilidade</label>
+      <textarea id="sustentabilidade" name="sustentabilidade"></textarea>
+    </div>
+    <div class="field">
+      <label for="riscos">Riscos e mitigação</label>
+      <textarea id="riscos" name="riscos"></textarea>
+    </div>
+    <div class="field">
+      <label for="comunicacao">Comunicação e divulgação</label>
+      <textarea id="comunicacao" name="comunicacao"></textarea>
+    </div>
+    <div class="field">
+      <label for="aspectosLegais">Aspectos legais, éticos e anexos</label>
+      <textarea id="aspectosLegais" name="aspectosLegais"></textarea>
+    </div>
+
+    <h2>Tabela de Coerência</h2>
+    <p style="color: var(--text-soft); font-size: 15px;">Para cada objetivo específico, preencha uma linha.</p>
+    <table id="tabelaCoerencia">
+      <thead>
+        <tr>
+          <th>Objetivo</th><th>Meta</th><th>Indicador</th><th>Fonte</th>
+          <th>Atividade</th><th>Responsável</th><th>Rubrica</th><th>Mês</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text"></td><td><input type="text"></td>
+          <td><input type="text"></td><td><input type="text"></td>
+          <td><input type="text"></td><td><input type="text"></td>
+          <td><input type="text"></td><td><input type="text"></td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="button" class="btn-secondary" onclick="addLinha('tabelaCoerencia', 8)">+ Adicionar linha</button>
+
+    <h2>Equipe do Projeto</h2>
+    <table id="tabelaEquipe">
+      <thead>
+        <tr><th>Função</th><th>Carga horária</th><th>Formação</th><th>O que executa</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text"></td><td><input type="text"></td>
+          <td><input type="text"></td><td><input type="text"></td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="button" class="btn-secondary" onclick="addLinha('tabelaEquipe', 4)">+ Adicionar linha</button>
+
+    <h2>Cronograma Físico-Financeiro</h2>
+    <table id="tabelaCronograma">
+      <thead>
+        <tr><th>Atividade</th><th>Período</th><th>Responsável</th><th>Produto</th><th>Custo</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text"></td><td><input type="text"></td>
+          <td><input type="text"></td><td><input type="text"></td>
+          <td><input type="text"></td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="button" class="btn-secondary" onclick="addLinha('tabelaCronograma', 5)">+ Adicionar linha</button>
+
+    <h2>Conferência Final</h2>
+    <h3>Documentação e prazo</h3>
+    <div class="checkbox-group"><input type="checkbox" id="c1"><label for="c1">Documentos anexados no formato e tamanho corretos</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c2"><label for="c2">Nenhuma certidão vence antes da submissão</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c3"><label for="c3">Formulários na versão mais recente</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c4"><label for="c4">Envio com 2 dias de folga</label></div>
+
+    <h3>Elegibilidade</h3>
+    <div class="checkbox-group"><input type="checkbox" id="c5"><label for="c5">Tempo de existência e tipo jurídico OK</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c6"><label for="c6">Objeto do projeto cabe no objeto da chamada</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c7"><label for="c7">Território de execução atendido</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c8"><label for="c8">Valor dentro da faixa permitida</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c9"><label for="c9">Prazo de execução dentro do máximo</label></div>
+
+    <h3>Mérito e coerência</h3>
+    <div class="checkbox-group"><input type="checkbox" id="c10"><label for="c10">Cada critério do edital tem página correspondente</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c11"><label for="c11">Cada objetivo tem meta, indicador, fonte, atividade, responsável, rubrica e mês</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c12"><label for="c12">Metas do resumo = metas dos indicadores</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c13"><label for="c13">Atividades da metodologia = atividades do cronograma</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c14"><label for="c14">Dados da justificativa com fonte e ano</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c15"><label for="c15">Nenhum anexo citado sem estar no envio</label></div>
+
+    <h3>Orçamento</h3>
+    <div class="checkbox-group"><input type="checkbox" id="c16"><label for="c16">Todo item tem unidade, qtd, valor unit., total e memória</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c17"><label for="c17">Nenhum item na lista de despesas vedadas</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c18"><label for="c18">Rubricas com nomes e ordem do edital</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c19"><label for="c19">Preços comprovados (3 orçamentos ou tabela)</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c20"><label for="c20">Encargos e tributos previstos</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c21"><label for="c21">Rubrica de elaboração incluída quando permitida</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c22"><label for="c22">Soma da planilha = valor do resumo e formulário</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c23"><label for="c23">Contrapartida demonstrável</label></div>
+
+    <h3>Leitura final</h3>
+    <div class="checkbox-group"><input type="checkbox" id="c24"><label for="c24">Pessoa de fora leu e entendeu</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c25"><label for="c25">Nenhum trecho de projeto anterior</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c26"><label for="c26">Texto dentro dos limites de caracteres</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="c27"><label for="c27">Título diz o que é, para quem e onde</label></div>
+
+    <h2>Fechamento e Contrato</h2>
+    <div class="row">
+      <div class="field">
+        <label for="formaFechamento">Forma de fechamento</label>
+        <select id="formaFechamento" name="formaFechamento">
+          <option value="">Selecione</option>
+          <option value="Serviço pontual">Serviço pontual</option>
+          <option value="Êxito">Êxito</option>
+          <option value="Assessoria">Assessoria mensal</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="valorCombinado">Valor combinado (R$)</label>
+        <input type="number" id="valorCombinado" name="valorCombinado" step="0.01">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="dataContrato">Data do contrato</label>
+        <input type="date" id="dataContrato" name="dataContrato">
+      </div>
+      <div class="field">
+        <label for="linkPasta">Link da pasta de arquivos</label>
+        <input type="url" id="linkPasta" name="linkPasta">
+      </div>
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="contratoAssinado" name="contratoAssinado">
+      <label for="contratoAssinado">Contrato assinado?</label>
+    </div>
+
+    <h2>Status</h2>
+    <div class="status-bar" id="statusBar">
+      <span class="status-chip" data-status="Prospecção">Prospecção</span>
+      <span class="status-chip" data-status="Elaboração">Elaboração</span>
+      <span class="status-chip" data-status="Submetido">Submetido</span>
+      <span class="status-chip" data-status="Aprovado">Aprovado</span>
+      <span class="status-chip" data-status="Inapto">Inapto</span>
+      <span class="status-chip" data-status="Reprovado">Reprovado</span>
+      <span class="status-chip" data-status="Em execução">Em execução</span>
+      <span class="status-chip" data-status="Prestação de contas">Prestação de contas</span>
+      <span class="status-chip" data-status="Concluído">Concluído</span>
+    </div>
+
+    <h2>Observações</h2>
+    <div class="field">
+      <textarea id="observacoes" name="observacoes"></textarea>
+    </div>
+  </form>
+
+  <div class="actions">
+    <button type="button" class="btn-primary" onclick="salvar()">💾 Salvar</button>
+    <button type="button" class="btn-secondary" onclick="voltarParaLista()">Cancelar</button>
+  </div>
+</div>
+
+<div class="actions" id="acoesGlobais">
+  <button type="button" class="btn-secondary" onclick="exportarTudo()">📤 Exportar JSON</button>
+  <button type="button" class="btn-secondary" onclick="document.getElementById('importFile').click()">📥 Importar JSON</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importar(event)">
+</div>
+
+<div class="saved-indicator" id="savedIndicator">✓ Salvo</div>
+
+<script>
+let lista = [];
+let indiceAtual = -1;
+
+function carregar() {
+  lista = JSON.parse(localStorage.getItem('propostas') || '[]');
+  renderizarLista();
+}
+
+function salvarLista() {
+  localStorage.setItem('propostas', JSON.stringify(lista));
+}
+
+function formatarMoeda(valor) {
+  if (!valor) return '-';
+  return 'R$ ' + parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+}
+
+function renderizarLista() {
+  document.getElementById('contador').textContent = lista.length;
+  const div = document.getElementById('lista');
+  if (lista.length === 0) {
+    div.innerHTML = '<p class="empty-state">Nenhuma proposta cadastrada ainda.</p>';
+    return;
+  }
+  div.innerHTML = lista.map((p, i) => `
+    <div class="card">
+      <h3>${p.nome || 'Sem nome'}</h3>
+      <p><strong>Edital:</strong> ${p.edital || '-'}</p>
+      <p><strong>Conceito:</strong> ${p.conceito || '-'}</p>
+      <p><strong>Valor solicitado:</strong> ${formatarMoeda(p.valorSolicitado)}</p>
+      <p><strong>Status:</strong> ${p.status || '-'}</p>
+      <div class="card-actions">
+        <button class="btn-secondary" onclick="editar(${i})">Editar</button>
+        <button class="btn-danger" onclick="excluir(${i})">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function novoRegistro() {
+  indiceAtual = -1;
+  document.getElementById('formTitulo').textContent = 'Nova proposta';
+  document.getElementById('propostasForm').reset();
+  document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+  document.getElementById('acoesGlobais').classList.add('hidden');
+  atualizarTotal();
+}
+
+function editar(i) {
+  indiceAtual = i;
+  const p = lista[i];
+  document.getElementById('formTitulo').textContent = 'Editar proposta';
+  const form = document.getElementById('propostasForm');
+  form.reset();
+  Object.keys(p).forEach(key => {
+    if (key === 'tabelaCoerencia' || key === 'tabelaEquipe' || key === 'tabelaCronograma') {
+      restaurarTabela(key, p[key]);
+      return;
+    }
+    const el = document.getElementById(key);
+    if (el) {
+      if (el.type === 'checkbox') el.checked = p[key];
+      else el.value = p[key];
+    }
+  });
+  atualizarStatus(p.status);
+  atualizarTotal();
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+  document.getElementById('acoesGlobais').classList.add('hidden');
+}
+
+function restaurarTabela(chave, dados) {
+  if (!dados || !Array.isArray(dados)) return;
+  const tabelaId = chave;
+  const tbody = document.querySelector(`#${tabelaId} tbody`);
+  tbody.innerHTML = '';
+  dados.forEach(linha => {
+    const tr = document.createElement('tr');
+    linha.forEach(valor => {
+      const td = document.createElement('td');
+      td.innerHTML = `<input type="text" value="${valor || ''}">`;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function excluir(i) {
+  if (confirm('Tem certeza?')) {
+    lista.splice(i, 1);
+    salvarLista();
+    renderizarLista();
+  }
+}
+
+function voltarParaLista() {
+  document.getElementById('listaView').classList.remove('hidden');
+  document.getElementById('formView').classList.add('hidden');
+  document.getElementById('acoesGlobais').classList.remove('hidden');
+  renderizarLista();
+}
+
+function coletarTabela(id) {
+  const linhas = [];
+  document.querySelectorAll(`#${id} tbody tr`).forEach(tr => {
+    const valores = [];
+    tr.querySelectorAll('input').forEach(inp => valores.push(inp.value));
+    linhas.push(valores);
+  });
+  return linhas;
+}
+
+function salvar() {
+  const form = document.getElementById('propostasForm');
+  const dados = {};
+  new FormData(form).forEach((value, key) => { dados[key] = value; });
+  form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    dados[cb.id] = cb.checked;
+  });
+  const activeChip = document.querySelector('.status-chip.active');
+  if (activeChip) dados.status = activeChip.dataset.status;
+  dados.tabelaCoerencia = coletarTabela('tabelaCoerencia');
+  dados.tabelaEquipe = coletarTabela('tabelaEquipe');
+  dados.tabelaCronograma = coletarTabela('tabelaCronograma');
+
+  if (indiceAtual === -1) lista.push(dados);
+  else lista[indiceAtual] = dados;
+  salvarLista();
+  const ind = document.getElementById('savedIndicator');
+  ind.classList.add('show');
+  setTimeout(() => ind.classList.remove('show'), 1500);
+  setTimeout(() => voltarParaLista(), 800);
+}
+
+function atualizarStatus(status) {
+  document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+  const chip = document.querySelector(`.status-chip[data-status="${status}"]`);
+  if (chip) chip.classList.add('active');
+}
+
+document.querySelectorAll('.status-chip').forEach(chip => {
+  chip.addEventListener('click', () => atualizarStatus(chip.dataset.status));
+});
+
+function atualizarTotal() {
+  const campos = ['valorIdentidade', 'valorFotografia', 'valorTextos', 'valorOutros', 'valorRubricaElaboracao'];
+  let total = 0;
+  campos.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) total += parseFloat(el.value) || 0;
+  });
+  document.getElementById('totalRubricas').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+}
+
+document.getElementById('propostasForm').addEventListener('input', atualizarTotal);
+
+function addLinha(tabelaId, cols) {
+  const tbody = document.querySelector(`#${tabelaId} tbody`);
+  const tr = document.createElement('tr');
+  for (let i = 0; i < cols; i++) {
+    const td = document.createElement('td');
+    td.innerHTML = '<input type="text">';
+    tr.appendChild(td);
+  }
+  tbody.appendChild(tr);
+}
+
+function exportarTudo() {
+  const dados = JSON.stringify(lista, null, 2);
+  const blob = new Blob([dados], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'propostas-backup.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importar(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const dados = JSON.parse(e.target.result);
+      if (Array.isArray(dados)) {
+        if (confirm(`Importar ${dados.length} propostas?`)) {
+          lista = lista.concat(dados);
+          salvarLista();
+          renderizarLista();
+        }
+      } else {
+        if (confirm('Importar esta proposta?')) {
+          lista.push(dados);
+          salvarLista();
+          renderizarLista();
+        }
+      }
+    } catch (err) {
+      alert('Arquivo inválido.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+const params = new URLSearchParams(window.location.search);
+if (params.has('editar')) editar(parseInt(params.get('editar')));
+
+carregar();
+</script>
+
+</body>
+</html>

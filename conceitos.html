@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conceitos · Sistema de Captação</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Voltar ao painel</a>
+
+<h1>💡 Conceitos</h1>
+<p class="subtitle">Seus projetos e ideias</p>
+
+<div id="listaView">
+  <div class="section-title">
+    <h2>Conceitos cadastrados <span class="count-badge" id="contador">0</span></h2>
+    <button class="btn-primary" onclick="novoRegistro()">+ Novo conceito</button>
+  </div>
+  <div id="lista"></div>
+</div>
+
+<div id="formView" class="hidden">
+  <div class="section-title">
+    <h2 id="formTitulo">Novo conceito</h2>
+    <button class="btn-secondary" onclick="voltarParaLista()">← Voltar</button>
+  </div>
+
+  <form id="conceitosForm">
+    <h2>Identificação</h2>
+    <div class="field">
+      <label for="nome">Nome do projeto</label>
+      <input type="text" id="nome" name="nome">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="ativoPrincipal">Ativo principal</label>
+        <input type="text" id="ativoPrincipal" name="ativoPrincipal" placeholder="Ex: livro, metodologia">
+      </div>
+      <div class="field">
+        <label for="causa">Causa</label>
+        <select id="causa" name="causa">
+          <option value="">Selecione</option>
+          <option value="Cultura">Cultura</option>
+          <option value="Educação">Educação</option>
+          <option value="Saúde">Saúde</option>
+          <option value="Esporte">Esporte</option>
+          <option value="Meio ambiente">Meio ambiente</option>
+          <option value="Social">Social</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="publicoAlvo">Público-alvo</label>
+        <input type="text" id="publicoAlvo" name="publicoAlvo">
+      </div>
+      <div class="field">
+        <label for="territorio">Território pretendido</label>
+        <input type="text" id="territorio" name="territorio">
+      </div>
+    </div>
+    <div class="field">
+      <label for="dataCriacao">Data de criação</label>
+      <input type="date" id="dataCriacao" name="dataCriacao">
+    </div>
+
+    <h2>Descrição</h2>
+    <div class="field">
+      <label for="descricaoUmaFrase">Descrição em uma frase</label>
+      <textarea id="descricaoUmaFrase" name="descricaoUmaFrase" placeholder="O projeto [AÇÃO] para [PÚBLICO] em [TERRITÓRIO], usando [ATIVO], com o objetivo de [RESULTADO]."></textarea>
+    </div>
+    <div class="field">
+      <label for="problema">Problema que resolve</label>
+      <textarea id="problema" name="problema" placeholder="Com dado e fonte, se houver"></textarea>
+    </div>
+    <div class="field">
+      <label for="solucao">Solução proposta</label>
+      <textarea id="solucao" name="solucao"></textarea>
+    </div>
+    <div class="field">
+      <label for="objetivoGeral">Objetivo geral</label>
+      <textarea id="objetivoGeral" name="objetivoGeral"></textarea>
+    </div>
+    <div class="field">
+      <label for="objetivosEspecificos">Objetivos específicos (3 a 5)</label>
+      <textarea id="objetivosEspecificos" name="objetivosEspecificos"></textarea>
+    </div>
+    <div class="field">
+      <label for="resultadoEsperado">Resultado esperado</label>
+      <textarea id="resultadoEsperado" name="resultadoEsperado" placeholder="Meta + indicador"></textarea>
+    </div>
+
+    <h2>Estimativa de custo</h2>
+    <div class="field">
+      <label for="custoEstimado">Custo estimado total (R$)</label>
+      <input type="number" id="custoEstimado" name="custoEstimado" step="0.01">
+    </div>
+    <div class="field">
+      <label for="rubricasPrincipais">Rubricas principais</label>
+      <input type="text" id="rubricasPrincipais" name="rubricasPrincipais" placeholder="Ex: equipe, material, comunicação">
+    </div>
+    <div class="field">
+      <label for="contrapartidaPossivel">Contrapartida possível</label>
+      <textarea id="contrapartidaPossivel" name="contrapartidaPossivel"></textarea>
+    </div>
+
+    <h2>Oportunidades</h2>
+    <div class="field">
+      <label for="tiposEdital">Tipos de edital que se encaixam</label>
+      <textarea id="tiposEdital" name="tiposEdital"></textarea>
+    </div>
+    <div class="field">
+      <label for="orgaosFinanciadores">Órgãos/empresas que costumam financiar</label>
+      <textarea id="orgaosFinanciadores" name="orgaosFinanciadores"></textarea>
+    </div>
+
+    <h2>Status</h2>
+    <div class="status-bar" id="statusBar">
+      <span class="status-chip" data-status="Ideia">Ideia</span>
+      <span class="status-chip" data-status="Em desenvolvimento">Em desenvolvimento</span>
+      <span class="status-chip" data-status="Pronto para edital">Pronto para edital</span>
+      <span class="status-chip" data-status="Em captação">Em captação</span>
+      <span class="status-chip" data-status="Em execução">Em execução</span>
+      <span class="status-chip" data-status="Concluído">Concluído</span>
+      <span class="status-chip" data-status="Arquivado">Arquivado</span>
+    </div>
+
+    <div class="field">
+      <label for="oQueFalta">O que falta para acontecer</label>
+      <textarea id="oQueFalta" name="oQueFalta" placeholder="Recurso, equipe, parceiro, documento..."></textarea>
+    </div>
+
+    <h2>Observações</h2>
+    <div class="field">
+      <textarea id="observacoes" name="observacoes" placeholder="Notas, materiais de apoio, referências..."></textarea>
+    </div>
+  </form>
+
+  <div class="actions">
+    <button type="button" class="btn-primary" onclick="salvar()">💾 Salvar</button>
+    <button type="button" class="btn-secondary" onclick="voltarParaLista()">Cancelar</button>
+  </div>
+</div>
+
+<div class="actions" id="acoesGlobais">
+  <button type="button" class="btn-secondary" onclick="exportarTudo()">📤 Exportar JSON</button>
+  <button type="button" class="btn-secondary" onclick="document.getElementById('importFile').click()">📥 Importar JSON</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importar(event)">
+</div>
+
+<div class="saved-indicator" id="savedIndicator">✓ Salvo</div>
+
+<script>
+let lista = [];
+let indiceAtual = -1;
+
+function carregar() {
+  lista = JSON.parse(localStorage.getItem('conceitos') || '[]');
+  renderizarLista();
+}
+
+function salvarLista() {
+  localStorage.setItem('conceitos', JSON.stringify(lista));
+}
+
+function renderizarLista() {
+  document.getElementById('contador').textContent = lista.length;
+  const div = document.getElementById('lista');
+  if (lista.length === 0) {
+    div.innerHTML = '<p class="empty-state">Nenhum conceito cadastrado ainda.</p>';
+    return;
+  }
+  div.innerHTML = lista.map((c, i) => `
+    <div class="card">
+      <h3>${c.nome || 'Sem nome'}</h3>
+      <p><strong>Causa:</strong> ${c.causa || '-'}</p>
+      <p><strong>Público:</strong> ${c.publicoAlvo || '-'}</p>
+      <p><strong>Status:</strong> ${c.status || '-'}</p>
+      <p><strong>O que falta:</strong> ${c.oQueFalta || '-'}</p>
+      <div class="card-actions">
+        <button class="btn-secondary" onclick="editar(${i})">Editar</button>
+        <button class="btn-danger" onclick="excluir(${i})">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function novoRegistro() {
+  indiceAtual = -1;
+  document.getElementById('formTitulo').textContent = 'Novo conceito';
+  document.getElementById('conceitosForm').reset();
+  document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+  document.getElementById('acoesGlobais').classList.add('hidden');
+}
+
+function editar(i) {
+  indiceAtual = i;
+  const c = lista[i];
+  document.getElementById('formTitulo').textContent = 'Editar conceito';
+  const form = document.getElementById('conceitosForm');
+  form.reset();
+  Object.keys(c).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) el.value = c[key];
+  });
+  atualizarStatus(c.status);
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+  document.getElementById('acoesGlobais').classList.add('hidden');
+}
+
+function excluir(i) {
+  if (confirm('Tem certeza?')) {
+    lista.splice(i, 1);
+    salvarLista();
+    renderizarLista();
+  }
+}
+
+function voltarParaLista() {
+  document.getElementById('listaView').classList.remove('hidden');
+  document.getElementById('formView').classList.add('hidden');
+  document.getElementById('acoesGlobais').classList.remove('hidden');
+  renderizarLista();
+}
+
+function salvar() {
+  const form = document.getElementById('conceitosForm');
+  const dados = {};
+  new FormData(form).forEach((value, key) => { dados[key] = value; });
+  const activeChip = document.querySelector('.status-chip.active');
+  if (activeChip) dados.status = activeChip.dataset.status;
+
+  if (indiceAtual === -1) lista.push(dados);
+  else lista[indiceAtual] = dados;
+  salvarLista();
+  const ind = document.getElementById('savedIndicator');
+  ind.classList.add('show');
+  setTimeout(() => ind.classList.remove('show'), 1500);
+  setTimeout(() => voltarParaLista(), 800);
+}
+
+function atualizarStatus(status) {
+  document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+  const chip = document.querySelector(`.status-chip[data-status="${status}"]`);
+  if (chip) chip.classList.add('active');
+}
+
+document.querySelectorAll('.status-chip').forEach(chip => {
+  chip.addEventListener('click', () => atualizarStatus(chip.dataset.status));
+});
+
+function exportarTudo() {
+  const dados = JSON.stringify(lista, null, 2);
+  const blob = new Blob([dados], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'conceitos-backup.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importar(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const dados = JSON.parse(e.target.result);
+      if (Array.isArray(dados)) {
+        if (confirm(`Importar ${dados.length} conceitos?`)) {
+          lista = lista.concat(dados);
+          salvarLista();
+          renderizarLista();
+        }
+      } else {
+        if (confirm('Importar este conceito?')) {
+          lista.push(dados);
+          salvarLista();
+          renderizarLista();
+        }
+      }
+    } catch (err) {
+      alert('Arquivo inválido.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+const params = new URLSearchParams(window.location.search);
+if (params.has('editar')) editar(parseInt(params.get('editar')));
+
+carregar();
+</script>
+
+</body>
+</html>

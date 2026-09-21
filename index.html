@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel · Sistema de Captação</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>📊 Painel</h1>
+<p class="subtitle">Visão geral do sistema de captação</p>
+
+<div class="nav-links">
+  <a href="conceitos.html">💡 Conceitos</a>
+  <a href="editais.html">📋 Editais</a>
+  <a href="instituicoes.html">🏛️ Instituições</a>
+  <a href="contatos.html">👤 Contatos</a>
+  <a href="propostas.html">📝 Propostas</a>
+</div>
+
+<div id="painel"></div>
+
+<script>
+function carregarLista(chave) {
+  return JSON.parse(localStorage.getItem(chave) || '[]');
+}
+
+function formatarMoeda(valor) {
+  if (!valor) return '-';
+  return 'R$ ' + parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+}
+
+function formatarData(data) {
+  if (!data) return '-';
+  const d = new Date(data + 'T00:00:00');
+  return d.toLocaleDateString('pt-BR');
+}
+
+function renderizarPainel() {
+  const conceitos = carregarLista('conceitos');
+  const editais = carregarLista('editais');
+  const instituicoes = carregarLista('instituicoes');
+  const contatos = carregarLista('contatos');
+  const propostas = carregarLista('propostas');
+
+  let html = '';
+
+  // Conceitos
+  html += `<h2>💡 Conceitos <span class="count-badge">${conceitos.length}</span></h2>`;
+  if (conceitos.length === 0) {
+    html += '<p class="empty-state">Nenhum conceito cadastrado. <a href="conceitos.html" style="color: var(--accent);">Cadastrar agora</a></p>';
+  } else {
+    conceitos.forEach((c, i) => {
+      html += `<div class="card" onclick="location.href='conceitos.html?editar=${i}'">
+        <h3>${c.nome || 'Sem nome'}</h3>
+        <p><strong>Causa:</strong> ${c.causa || '-'}</p>
+        <p><strong>Status:</strong> ${c.status || '-'}</p>
+        <p><strong>O que falta:</strong> ${c.oQueFalta || '-'}</p>
+      </div>`;
+    });
+  }
+
+  // Editais
+  html += `<h2>📋 Editais <span class="count-badge">${editais.length}</span></h2>`;
+  if (editais.length === 0) {
+    html += '<p class="empty-state">Nenhum edital cadastrado. <a href="editais.html" style="color: var(--accent);">Cadastrar agora</a></p>';
+  } else {
+    editais.forEach((e, i) => {
+      html += `<div class="card" onclick="location.href='editais.html?editar=${i}'">
+        <h3>${e.nome || 'Sem nome'}</h3>
+        <p><strong>Órgão:</strong> ${e.orgao || '-'}</p>
+        <p><strong>Prazo:</strong> ${formatarData(e.prazoInscricao)}</p>
+        <p><strong>Teto:</strong> ${formatarMoeda(e.teto)}</p>
+      </div>`;
+    });
+  }
+
+  // Instituições
+  html += `<h2>🏛️ Instituições <span class="count-badge">${instituicoes.length}</span></h2>`;
+  if (instituicoes.length === 0) {
+    html += '<p class="empty-state">Nenhuma instituição cadastrada. <a href="instituicoes.html" style="color: var(--accent);">Cadastrar agora</a></p>';
+  } else {
+    instituicoes.forEach((inst, i) => {
+      html += `<div class="card" onclick="location.href='instituicoes.html?editar=${i}'">
+        <h3>${inst.nome || 'Sem nome'}</h3>
+        <p><strong>CNPJ:</strong> ${inst.cnpj || '-'}</p>
+        <p><strong>Status:</strong> ${inst.status || '-'}</p>
+      </div>`;
+    });
+  }
+
+  // Contatos
+  html += `<h2>👤 Contatos <span class="count-badge">${contatos.length}</span></h2>`;
+  if (contatos.length === 0) {
+    html += '<p class="empty-state">Nenhum contato cadastrado. <a href="contatos.html" style="color: var(--accent);">Cadastrar agora</a></p>';
+  } else {
+    contatos.forEach((c, i) => {
+      html += `<div class="card" onclick="location.href='contatos.html?editar=${i}'">
+        <h3>${c.nome || 'Sem nome'}</h3>
+        <p><strong>Cargo:</strong> ${c.cargo || '-'}</p>
+        <p><strong>Instituição:</strong> ${c.instituicao || '-'}</p>
+        <p><strong>Status:</strong> ${c.status || '-'}</p>
+      </div>`;
+    });
+  }
+
+  // Propostas
+  html += `<h2>📝 Propostas <span class="count-badge">${propostas.length}</span></h2>`;
+  if (propostas.length === 0) {
+    html += '<p class="empty-state">Nenhuma proposta cadastrada. <a href="propostas.html" style="color: var(--accent);">Cadastrar agora</a></p>';
+  } else {
+    propostas.forEach((p, i) => {
+      html += `<div class="card" onclick="location.href='propostas.html?editar=${i}'">
+        <h3>${p.nome || 'Sem nome'}</h3>
+        <p><strong>Edital:</strong> ${p.edital || '-'}</p>
+        <p><strong>Conceito:</strong> ${p.conceito || '-'}</p>
+        <p><strong>Status:</strong> ${p.status || '-'}</p>
+        <p><strong>Valor solicitado:</strong> ${formatarMoeda(p.valorSolicitado)}</p>
+      </div>`;
+    });
+  }
+
+  document.getElementById('painel').innerHTML = html;
+}
+
+renderizarPainel();
+</script>
+
+</body>
+</html>

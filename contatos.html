@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contatos · Sistema de Captação</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Voltar ao painel</a>
+
+<h1>👤 Contatos</h1>
+<p class="subtitle">Cadastro de pessoas decisórias</p>
+
+<div id="listaView">
+  <div class="section-title">
+    <h2>Contatos cadastrados <span class="count-badge" id="contador">0</span></h2>
+    <button class="btn-primary" onclick="novoRegistro()">+ Novo contato</button>
+  </div>
+  <div id="lista"></div>
+</div>
+
+<div id="formView" class="hidden">
+  <div class="section-title">
+    <h2 id="formTitulo">Novo contato</h2>
+    <button class="btn-secondary" onclick="voltarParaLista()">← Voltar</button>
+  </div>
+
+  <form id="contatosForm">
+    <h2>Identificação</h2>
+    <div class="field">
+      <label for="nome">Nome completo</label>
+      <input type="text" id="nome" name="nome">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="cargo">Cargo/Função</label>
+        <input type="text" id="cargo" name="cargo">
+      </div>
+      <div class="field">
+        <label for="instituicao">Instituição vinculada</label>
+        <input type="text" id="instituicao" name="instituicao">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="telefone">Telefone</label>
+        <input type="text" id="telefone" name="telefone">
+      </div>
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input type="text" id="email" name="email">
+      </div>
+    </div>
+    <div class="field">
+      <label for="redesSociais">Redes sociais</label>
+      <input type="text" id="redesSociais" name="redesSociais">
+    </div>
+
+    <h2>Pesquisa pessoal</h2>
+    <div class="row">
+      <div class="field">
+        <label for="assuntoPessoal1">Assunto pessoal 1</label>
+        <input type="text" id="assuntoPessoal1" name="assuntoPessoal1">
+      </div>
+      <div class="field">
+        <label for="assuntoPessoal2">Assunto pessoal 2</label>
+        <input type="text" id="assuntoPessoal2" name="assuntoPessoal2">
+      </div>
+    </div>
+    <div class="alert">
+      <strong>💡 Dica:</strong>
+      <ul>
+        <li>Descubra antes da primeira conversa</li>
+        <li>Conexão não se improvisa</li>
+      </ul>
+    </div>
+
+    <h2>Histórico</h2>
+    <div class="row">
+      <div class="field">
+        <label for="dataPrimeiraMensagem">Data da primeira mensagem</label>
+        <input type="date" id="dataPrimeiraMensagem" name="dataPrimeiraMensagem">
+      </div>
+      <div class="field">
+        <label for="dataReuniao">Data da reunião</label>
+        <input type="date" id="dataReuniao" name="dataReuniao">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="formaFechamento">Forma de fechamento</label>
+        <select id="formaFechamento" name="formaFechamento">
+          <option value="">Selecione</option>
+          <option value="Serviço pontual">Serviço pontual</option>
+          <option value="Êxito">Êxito</option>
+          <option value="Assessoria">Assessoria</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="valorCombinado">Valor combinado (R$)</label>
+        <input type="number" id="valorCombinado" name="valorCombinado" step="0.01">
+      </div>
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="contratoAssinado" name="contratoAssinado">
+      <label for="contratoAssinado">Contrato assinado?</label>
+    </div>
+
+    <h2>Status</h2>
+    <div class="status-bar" id="statusBar">
+      <span class="status-chip" data-status="Identificado">Identificado</span>
+      <span class="status-chip" data-status="Contato feito">Contato feito</span>
+      <span class="status-chip" data-status="Reunião agendada">Reunião agendada</span>
+      <span class="status-chip" data-status="Reunião realizada">Reunião realizada</span>
+      <span class="status-chip" data-status="Contratado">Contratado</span>
+    </div>
+
+    <h2>Observações</h2>
+    <div class="field">
+      <textarea id="observacoes" name="observacoes" placeholder="Notas sobre a conversa, próximos passos..."></textarea>
+    </div>
+  </form>
+
+  <div class="actions">
+    <button type="button" class="btn-primary" onclick="salvar()">💾 Salvar</button>
+    <button type="button" class="btn-secondary" onclick="voltarParaLista()">Cancelar</button>
+  </div>
+</div>
+
+<div class="actions" id="acoesGlobais">
+  <button type="button" class="btn-secondary" onclick="exportarTudo()">📤 Exportar JSON</button>
+  <button type="button" class="btn-secondary" onclick="document.getElementById('importFile').click()">📥 Importar JSON</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importar(event)">
+</div>
+
+<div class="saved-indicator" id="savedIndicator">✓ Salvo</div>
+
+<script>
+let lista = [];
+let indiceAtual = -1;
+
+function carregar() {
+  lista = JSON.parse(localStorage.getItem('contatos') || '[]');
+  renderizarLista();
+}
+
+function salvarLista() {
+  localStorage.setItem('contatos', JSON.stringify(lista));
+}
+
+function renderizarLista() {
+  document.getElementById('contador').textContent = lista.length;
+  const div = document.getElementById('lista');
+  if (lista.length === 0) {
+    div.innerHTML = '<p class="empty-state">Nenhum contato cadastrado ainda.</p>';
+    return;
+  }
+  div.innerHTML = lista.map((c, i) => `
+    <div class="card">
+      <h3>${c.nome || 'Sem nome'}</h3>
+      <p><strong>Cargo:</strong> ${c.cargo || '-'}</p>
+      <p><strong>Instituição:</strong> ${c.instituicao || '-'}</p>
+      <p><strong>Status:</strong> ${c.status || '-'}</p>
+      <div class="card-actions">
+        <button class="btn-secondary" onclick="editar(${i})">Editar</button>
+        <button class="btn-danger" onclick="excluir(${i})">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function novoRegistro() {
+  indiceAtual = -1;
+  document.getElementById('formTitulo').textContent = 'Novo contato';
+  document.getElementById('contatosForm').reset();
+  document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+  document.getElementById('acoesGlobais').classList.add('hidden');
+}
+
+function editar(i) {
+  indiceAtual = i;
+  const c = lista[i];
+  document.getElementById('formTitulo').textContent = 'Editar contato';
+  const form = document.getElementById('contatosForm');
+  form.reset();
+  Object.keys(c).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) {
+      if (el.type === 'checkbox') el.checked = c[key];
+      else el.value = c[key];
+    }
+  });
+  atualizarStatus(c.status);
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+  document.getElementById('acoesGlobais').classList.add('hidden');
+}
+
+function excluir(i) {
+  if (confirm('Tem certeza?')) {
+    lista.splice(i, 1);
+    salvarLista();
+    renderizarLista();
+  }
+}
+
+function voltarParaLista() {
+  document.getElementById('listaView').classList.remove('hidden');
+  document.getElementById('formView').classList.add('hidden');
+  document.getElementById('acoesGlobais').classList.remove('hidden');
+  renderizarLista();
+}
+
+function salvar() {
+  const form = document.getElementById('contatosForm');
+  const dados = {};
+  new FormData(form).forEach((value, key) => { dados[key] = value; });
+  form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    dados[cb.id] = cb.checked;
+  });
+  const activeChip = document.querySelector('.status-chip.active');
+  if (activeChip) dados.status = activeChip.dataset.status;
+
+  if (indiceAtual === -1) lista.push(dados);
+  else lista[indiceAtual] = dados;
+  salvarLista();
+  const ind = document.getElementById('savedIndicator');
+  ind.classList.add('show');
+  setTimeout(() => ind.classList.remove('show'), 1500);
+  setTimeout(() => voltarParaLista(), 800);
+}
+
+function atualizarStatus(status) {
+  document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+  const chip = document.querySelector(`.status-chip[data-status="${status}"]`);
+  if (chip) chip.classList.add('active');
+}
+
+document.querySelectorAll('.status-chip').forEach(chip => {
+  chip.addEventListener('click', () => atualizarStatus(chip.dataset.status));
+});
+
+function exportarTudo() {
+  const dados = JSON.stringify(lista, null, 2);
+  const blob = new Blob([dados], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'contatos-backup.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importar(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const dados = JSON.parse(e.target.result);
+      if (Array.isArray(dados)) {
+        if (confirm(`Importar ${dados.length} contatos?`)) {
+          lista = lista.concat(dados);
+          salvarLista();
+          renderizarLista();
+        }
+      } else {
+        if (confirm('Importar este contato?')) {
+          lista.push(dados);
+          salvarLista();
+          renderizarLista();
+        }
+      }
+    } catch (err) {
+      alert('Arquivo inválido.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+const params = new URLSearchParams(window.location.search);
+if (params.has('editar')) editar(parseInt(params.get('editar')));
+
+carregar();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editais · Sistema de Captação</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Voltar ao painel</a>
+
+<h1>📋 Editais</h1>
+<p class="subtitle">Cadastro e análise de editais</p>
+
+<!-- LISTA -->
+<div id="listaView">
+  <div class="section-title">
+    <h2>Editais cadastrados <span class="count-badge" id="contador">0</span></h2>
+    <button class="btn-primary" onclick="novoRegistro()">+ Novo edital</button>
+  </div>
+  <div id="lista"></div>
+</div>
+
+<!-- FORMULÁRIO -->
+<div id="formView" class="hidden">
+  <div class="section-title">
+    <h2 id="formTitulo">Novo edital</h2>
+    <button class="btn-secondary" onclick="voltarParaLista()">← Voltar</button>
+  </div>
+
+  <form id="editaisForm">
+    <h2>Identificação</h2>
+    <div class="field">
+      <label for="nome">Nome do edital</label>
+      <input type="text" id="nome" name="nome">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="orgao">Órgão financiador</label>
+        <input type="text" id="orgao" name="orgao">
+      </div>
+      <div class="field">
+        <label for="ano">Ano da chamada</label>
+        <input type="number" id="ano" name="ano">
+      </div>
+    </div>
+    <div class="field">
+      <label for="link">Link do edital</label>
+      <input type="url" id="link" name="link">
+    </div>
+    <div class="field">
+      <label for="dataExtracao">Data de extração</label>
+      <input type="date" id="dataExtracao" name="dataExtracao">
+    </div>
+
+    <h2>Território</h2>
+    <div class="field">
+      <label for="abrangencia">Abrangência</label>
+      <select id="abrangencia" name="abrangencia">
+        <option value="">Selecione</option>
+        <option value="Nacional">Nacional</option>
+        <option value="Estadual">Estadual</option>
+        <option value="Regional">Regional</option>
+        <option value="Municipal">Municipal</option>
+        <option value="Bairro">Bairro</option>
+      </select>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="estados">Estado(s) atendido(s)</label>
+        <input type="text" id="estados" name="estados">
+      </div>
+      <div class="field">
+        <label for="municipios">Município(s) atendido(s)</label>
+        <input type="text" id="municipios" name="municipios">
+      </div>
+    </div>
+    <div class="alert">
+      <strong>⚠️ O que reprova:</strong>
+      <ul>
+        <li>Projeto de instituição de município fora da lista</li>
+        <li>Projeto executado em território diferente do edital</li>
+      </ul>
+    </div>
+
+    <h2>Quem pode participar</h2>
+    <div class="field">
+      <label for="tipoJuridico">Tipo jurídico aceito</label>
+      <select id="tipoJuridico" name="tipoJuridico">
+        <option value="">Selecione</option>
+        <option value="OSC">OSC</option>
+        <option value="Pessoa física">Pessoa física</option>
+        <option value="Empresa">Empresa</option>
+        <option value="Coletivo">Coletivo</option>
+        <option value="Órgão público">Órgão público</option>
+      </select>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="tempoMinimoExistencia">Tempo mínimo de existência (anos)</label>
+        <input type="number" id="tempoMinimoExistencia" name="tempoMinimoExistencia">
+      </div>
+      <div class="field">
+        <label for="exigenciasExtras">Exigências extras</label>
+        <input type="text" id="exigenciasExtras" name="exigenciasExtras">
+      </div>
+    </div>
+
+    <h2>Prazos</h2>
+    <div class="row">
+      <div class="field">
+        <label for="prazoInscricao">Prazo final de inscrição</label>
+        <input type="date" id="prazoInscricao" name="prazoInscricao">
+      </div>
+      <div class="field">
+        <label for="validadeCertidoes">Validade das certidões até</label>
+        <input type="date" id="validadeCertidoes" name="validadeCertidoes">
+      </div>
+    </div>
+
+    <h2>Valor</h2>
+    <div class="row">
+      <div class="field">
+        <label for="teto">Teto por proposta (R$)</label>
+        <input type="number" id="teto" name="teto" step="0.01">
+      </div>
+      <div class="field">
+        <label for="formaLiberacao">Forma de liberação</label>
+        <select id="formaLiberacao" name="formaLiberacao">
+          <option value="">Selecione</option>
+          <option value="Parcela única">Parcela única</option>
+          <option value="Etapas">Por etapas</option>
+          <option value="Reembolso">Reembolso</option>
+        </select>
+      </div>
+    </div>
+
+    <h2>Rubrica de elaboração</h2>
+    <div class="checkbox-group">
+      <input type="checkbox" id="rubricaElaboracaoAceita" name="rubricaElaboracaoAceita">
+      <label for="rubricaElaboracaoAceita">Rubrica aceita no edital?</label>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="nomeRubrica">Nome da rubrica</label>
+        <input type="text" id="nomeRubrica" name="nomeRubrica">
+      </div>
+      <div class="field">
+        <label for="percentualMaxRubrica">Percentual máximo (%)</label>
+        <input type="number" id="percentualMaxRubrica" name="percentualMaxRubrica">
+      </div>
+    </div>
+
+    <h2>Status</h2>
+    <div class="status-bar" id="statusBar">
+      <span class="status-chip" data-status="Analisado">Analisado</span>
+      <span class="status-chip" data-status="Descartado">Descartado</span>
+      <span class="status-chip" data-status="Em andamento">Em andamento</span>
+      <span class="status-chip" data-status="Encerrado">Encerrado</span>
+    </div>
+
+    <h2>Observações</h2>
+    <div class="field">
+      <textarea id="observacoes" name="observacoes" placeholder="Critérios de avaliação, despesas vedadas, notas..."></textarea>
+    </div>
+  </form>
+
+  <div class="actions">
+    <button type="button" class="btn-primary" onclick="salvar()">💾 Salvar</button>
+    <button type="button" class="btn-secondary" onclick="voltarParaLista()">Cancelar</button>
+  </div>
+</div>
+
+<!-- AÇÕES GLOBAIS -->
+<div class="actions" id="acoesGlobais">
+  <button type="button" class="btn-secondary" onclick="exportarTudo()">📤 Exportar JSON</button>
+  <button type="button" class="btn-secondary" onclick="document.getElementById('importFile').click()">📥 Importar JSON</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importar(event)">
+</div>
+
+<div class="saved-indicator" id="savedIndicator">✓ Salvo</div>
+
+<script>
+let lista = [];
+let indiceAtual = -1;
+
+function carregar() {
+  lista = JSON.parse(localStorage.getItem('editais') || '[]');
+  renderizarLista();
+}
+
+function salvarLista() {
+  localStorage.setItem('editais', JSON.stringify(lista));
+}
+
+function renderizarLista() {
+  document.getElementById('contador').textContent = lista.length;
+  const div = document.getElementById('lista');
+  if (lista.length === 0) {
+    div.innerHTML = '<p class="empty-state">Nenhum edital cadastrado ainda.</p>';
+    return;
+  }
+  div.innerHTML = lista.map((e, i) => `
+    <div class="card">
+      <h3>${e.nome || 'Sem nome'}</h3>
+      <p><strong>Órgão:</strong> ${e.orgao || '-'}</p>
+      <p><strong>Prazo:</strong> ${e.prazoInscricao || '-'}</p>
+      <p><strong>Teto:</strong> ${e.teto ? 'R$ ' + parseFloat(e.teto).toLocaleString('pt-BR') : '-'}</p>
+      <p><strong>Status:</strong> ${e.status || '-'}</p>
+      <div class="card-actions">
+        <button class="btn-secondary" onclick="editar(${i})">Editar</button>
+        <button class="btn-danger" onclick="excluir(${i})">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function novoRegistro() {
+  indiceAtual = -1;
+  document.getElementById('formTitulo').textContent = 'Novo edital';
+  document.getElementById('editaisForm').reset();
+  document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+  document.getElementById('acoesGlobais').classList.add('hidden');
+}
+
+function editar(i) {
+  indiceAtual = i;
+  const e = lista[i];
+  document.getElementById('formTitulo').textContent = 'Editar edital';
+  const form = document.getElementById('editaisForm');
+  form.reset();
+  Object.keys(e).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) {
+      if (el.type === 'checkbox') el.checked = e[key];
+      else el.value = e[key];
+    }
+  });
+  atualizarStatus(e.status);
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+  document.getElementById('acoesGlobais').classList.add('hidden');
+}
+
+function excluir(i) {
+  if (confirm('Tem certeza? Isso apaga este edital permanentemente.')) {
+    lista.splice(i, 1);
+    salvarLista();
+    renderizarLista();
+  }
+}
+
+function voltarParaLista() {
+  document.getElementById('listaView').classList.remove('hidden');
+  document.getElementById('formView').classList.add('hidden');
+  document.getElementById('acoesGlobais').classList.remove('hidden');
+  renderizarLista();
+}
+
+function salvar() {
+  const form = document.getElementById('editaisForm');
+  const dados = {};
+  new FormData(form).forEach((value, key) => { dados[key] = value; });
+  form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    dados[cb.id] = cb.checked;
+  });
+  const activeChip = document.querySelector('.status-chip.active');
+  if (activeChip) dados.status = activeChip.dataset.status;
+
+  if (indiceAtual === -1) {
+    lista.push(dados);
+  } else {
+    lista[indiceAtual] = dados;
+  }
+  salvarLista();
+  const ind = document.getElementById('savedIndicator');
+  ind.classList.add('show');
+  setTimeout(() => ind.classList.remove('show'), 1500);
+  setTimeout(() => voltarParaLista(), 800);
+}
+
+function atualizarStatus(status) {
+  document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+  const chip = document.querySelector(`.status-chip[data-status="${status}"]`);
+  if (chip) chip.classList.add('active');
+}
+
+document.querySelectorAll('.status-chip').forEach(chip => {
+  chip.addEventListener('click', () => atualizarStatus(chip.dataset.status));
+});
+
+function exportarTudo() {
+  const dados = JSON.stringify(lista, null, 2);
+  const blob = new Blob([dados], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'editais-backup.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importar(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const dados = JSON.parse(e.target.result);
+      if (Array.isArray(dados)) {
+        if (confirm(`Importar ${dados.length} editais? Isso será ADICIONADO aos existentes.`)) {
+          lista = lista.concat(dados);
+          salvarLista();
+          renderizarLista();
+        }
+      } else {
+        if (confirm('Importar este edital? Será ADICIONADO aos existentes.')) {
+          lista.push(dados);
+          salvarLista();
+          renderizarLista();
+        }
+      }
+    } catch (err) {
+      alert('Arquivo inválido.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Verifica se veio do painel com parâmetro ?editar=N
+const params = new URLSearchParams(window.location.search);
+if (params.has('editar')) {
+  editar(parseInt(params.get('editar')));
+}
+
+carregar();
+</script>
+
+</body>
+</html>
