@@ -27,7 +27,7 @@
 <script>
 const supabaseUrl = 'https://zqwzcfarpexciiajiigp.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxd3pjZmFycGV4Y2lpYWppaWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNjAzODMsImV4cCI6MjEwNTgzNjM4M30.0FPbUKWIL06kOJxvBrm2RDDIfkyjq3S_Tos-mVyrZmw';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const sb = supabase.createClient(supabaseUrl, supabaseKey);
 
 async function fazerLogin() {
   const email = document.getElementById('email').value;
@@ -43,7 +43,7 @@ async function fazerLogin() {
   msg.style.color = '#787774';
   msg.textContent = 'Entrando...';
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
   
   if (error) {
     msg.style.color = '#e03e3e';
