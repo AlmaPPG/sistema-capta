@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Projeto · Sistema de Captação</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <h1>💡 Meu Projeto</h1>
+  <button class="btn-secondary" onclick="fazerLogout()">Sair</button>
+</div>
+<p class="subtitle">Preencha os dados do seu projeto. Use o 🎤 para ditar.</p>
+
+<form id="projetoForm">
+  <h2>Dados do Projeto</h2>
+  
+  <div class="field">
+    <label for="nome">Nome do Projeto</label>
+    <input type="text" id="nome" name="nome">
+  </div>
+
+  <div class="field">
+    <label for="descricao">
+      Descrição do Projeto
+      <button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 14px; min-height: 32px; margin-left: 8px;" onclick="iniciarVoz('descricao')">🎤 Ditar</button>
+    </label>
+    <textarea id="descricao" name="descricao" placeholder="Descreva o que é o projeto..."></textarea>
+    <span id="status-voz" style="font-size: 14px; color: var(--accent); display: none;">Ouvindo...</span>
+  </div>
+
+  <div class="row">
+    <div class="field">
+      <label for="publico_alvo">Público-alvo</label>
+      <input type="text" id="publico_alvo" name="publico_alvo">
+    </div>
+    <div class="field">
+      <label for="territorio">Território</label>
+      <input type="text" id="territorio" name="territorio">
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="custo_estimado">Custo Estimado (R$)</label>
+    <input type="number" id="custo_estimado" name="custo_estimado" step="0.01">
+  </div>
+
+  <div class="field">
+    <label for="objetivo_geral">Objetivo Geral</label>
+    <textarea id="objetivo_geral" name="objetivo_geral"></textarea>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="btn-primary" onclick="salvarProjeto()">💾 Salvar Projeto</button>
+  </div>
+  <p id="msg-salvar" style="text-align: center; color: var(--success); display: none;">✓ Salvo com sucesso!</p>
+</form>
+
+<script>
+const supabaseUrl = 'https://zqwzcfarpexciiajiigp.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxd3pjZmFycGV4Y2lpYWppaWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNjAzODMsImV4cCI6MjEwNTgzNjM4M30.0FPbUKWIL06kOJxvBrm2RDDIfkyjq3S_Tos-mVyrZmw';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+let currentUser = null;
+let projectId = null;
+
+async function init() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.href = 'login.html';
+    return;
+  }
+  currentUser = session.user;
+
+  // Tenta buscar um projeto existente para este cliente
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('id, nome, descricao, publico_alvo, territorio, custo_estimado, objetivo_geral')
+    .eq('client_id', currentUser.id)
+    .single();
+
+  if (projects) {
+    projectId = projects.id;
+    document.getElementById('nome').value = projects.nome || '';
+    document.getElementById('descricao').value = projects.descricao || '';
+    document.getElementById('publico_alvo').value = projects.publico_alvo || '';
+    document.getElementById('territorio').value = projects.territorio || '';
+    document.getElementById('custo_estimado').value = projects.custo_estimado || '';
+    document.getElementById('objetivo_geral').value = projects.objetivo_geral || '';
+  }
+}
+
+async function salvarProjeto() {
+  const dados = {
+    client_id: currentUser.id,
+    nome: document.getElementById('nome').value,
+    descricao: document.getElementById('descricao').value,
+    publico_alvo: document.getElementById('publico_alvo').value,
+    territorio: document.getElementById('territorio').value,
+    custo_estimado: document.getElementById('custo_estimado').value || null,
+    objetivo_geral: document.getElementById('objetivo_geral').value
+  };
+
+  let error;
+  if (projectId) {
+    const res = await supabase.from('projects').update(dados).eq('id', projectId);
+    error = res.error;
+  } else {
+    const res = await supabase.from('projects').insert([dados]).select();
+    if (res.data) projectId = res.data[0].id;
+    error = res.error;
+  }
+
+  if (error) {
+    alert('Erro ao salvar: ' + error.message);
+  } else {
+    const msg = document.getElementById('msg-salvar');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 2000);
+  }
+}
+
+async function fazerLogout() {
+  await supabase.auth.signOut();
+  window.location.href = 'login.html';
+}
+
+// --- FUNÇÃO DE DITADO POR VOZ ---
+function iniciarVoz(campoId) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert('Seu navegador não suporta reconhecimento de voz. Tente usar o Google Chrome.');
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'pt-BR';
+  recognition.interimResults = false;
+
+  const statusEl = document.getElementById('status-voz');
+  statusEl.style.display = 'block';
+  statusEl.textContent = '🎤 Ouvindo... Fale agora.';
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    const textarea = document.getElementById(campoId);
+    // Adiciona ao texto existente ou substitui
+    textarea.value = textarea.value ? textarea.value + ' ' + transcript : transcript;
+    statusEl.textContent = '✓ Texto adicionado!';
+    setTimeout(() => statusEl.style.display = 'none', 2000);
+  };
+
+  recognition.onerror = (event) => {
+    statusEl.textContent = '❌ Erro no reconhecimento. Tente novamente.';
+    setTimeout(() => statusEl.style.display = 'none', 2000);
+  };
+
+  recognition.onend = () => {
+    if (statusEl.textContent.includes('Ouvindo')) {
+      statusEl.style.display = 'none';
+    }
+  };
+
+  recognition.start();
+}
+
+init();
+</script>
+</body>
+</html>

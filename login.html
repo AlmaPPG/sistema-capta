@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login · Sistema de Captação</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="max-width: 400px; margin-top: 10vh;">
+
+<h1>🔐 Acesso</h1>
+<p class="subtitle">Entre com seu e-mail e senha</p>
+
+<div class="field">
+  <label for="email">E-mail</label>
+  <input type="email" id="email" placeholder="seu@email.com">
+</div>
+<div class="field">
+  <label for="password">Senha</label>
+  <input type="password" id="password" placeholder="Sua senha">
+</div>
+
+<button class="btn-primary" style="width: 100%; margin-top: 16px;" onclick="fazerLogin()">Entrar</button>
+<p id="msg" style="margin-top: 16px; text-align: center; font-weight: bold;"></p>
+
+<script>
+const supabaseUrl = 'https://zqwzcfarpexciiajiigp.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxd3pjZmFycGV4Y2lpYWppaWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNjAzODMsImV4cCI6MjEwNTgzNjM4M30.0FPbUKWIL06kOJxvBrm2RDDIfkyjq3S_Tos-mVyrZmw';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+async function fazerLogin() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const msg = document.getElementById('msg');
+  
+  if (!email || !password) {
+    msg.style.color = 'var(--danger)';
+    msg.textContent = 'Preencha e-mail e senha.';
+    return;
+  }
+
+  msg.style.color = 'var(--text-soft)';
+  msg.textContent = 'Entrando...';
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  
+  if (error) {
+    msg.style.color = 'var(--danger)';
+    msg.textContent = 'Erro: ' + error.message;
+  } else {
+    msg.style.color = 'var(--success)';
+    msg.textContent = 'Sucesso! Redirecionando...';
+    setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
+  }
+}
+</script>
+</body>
+</html>
