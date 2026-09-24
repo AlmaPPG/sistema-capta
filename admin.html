@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel Admin · Sistema de Captação</title>
 <link rel="stylesheet" href="style.css">
+<!-- Carrega a biblioteca do Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -21,17 +22,31 @@
 <script>
 const supabaseUrl = 'https://zqwzcfarpexciiajiigp.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxd3pjZmFycGV4Y2lpYWppaWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNjAzODMsImV4cCI6MjEwNTgzNjM4M30.0FPbUKWIL06kOJxvBrm2RDDIfkyjq3S_Tos-mVyrZmw';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+// Usamos 'sb' para evitar conflito com a variável global da biblioteca
+// E configuramos explicitamente o localStorage para evitar bloqueios de "Tracking Prevention"
+const sb = supabase.createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: true,
+    storageKey: 'sistema-capta-auth-token',
+    storage: window.localStorage
+  }
+});
 
 async function init() {
-  const { data: { session } } = await supabase.auth.getSession();
+  // Verifica se há uma sessão ativa
+  const { data: { session } } = await sb.auth.getSession();
+  
   if (!session) {
+    // Se não houver sessão, manda de volta para o login
     window.location.href = 'login.html';
     return;
   }
 
-  // Busca todos os projetos e seus clientes relacionados
-  const { data: projects, error } = await supabase
+  document.getElementById('loading').textContent = 'Buscando projetos...';
+
+  // Busca todos os projetos e os dados do cliente vinculado
+  const { data: projects, error } = await sb
     .from('projects')
     .select(`
       id,
@@ -40,15 +55,14 @@ async function init() {
       clients ( nome, email )
     `);
 
+  document.getElementById('loading').style.display = 'none';
+
   if (error) {
     document.getElementById('conteudo').innerHTML = `<p style="color: var(--danger)">Erro ao carregar: ${error.message}</p>`;
-    document.getElementById('loading').style.display = 'none';
     return;
   }
 
-  document.getElementById('loading').style.display = 'none';
-  
-  if (projects.length === 0) {
+  if (!projects || projects.length === 0) {
     document.getElementById('conteudo').innerHTML = '<p class="empty-state">Nenhum projeto cadastrado ainda.</p>';
     return;
   }
@@ -57,20 +71,22 @@ async function init() {
   projects.forEach(p => {
     html += `
       <div class="card">
-        <h3>${p.nome}</h3>
+        <h3>${p.nome || 'Sem nome'}</h3>
         <p><strong>Cliente:</strong> ${p.clients?.nome || 'N/A'} (${p.clients?.email || 'N/A'})</p>
         <p><strong>Status:</strong> ${p.status || 'Em desenvolvimento'}</p>
       </div>
     `;
   });
+  
   document.getElementById('conteudo').innerHTML = html;
 }
 
 async function fazerLogout() {
-  await supabase.auth.signOut();
+  await sb.auth.signOut();
   window.location.href = 'login.html';
 }
 
+// Inicia o painel
 init();
 </script>
 </body>
