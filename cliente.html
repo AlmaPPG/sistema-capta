@@ -13,7 +13,7 @@
   <h1>💡 Meu Projeto</h1>
   <button class="btn-secondary" onclick="fazerLogout()">Sair</button>
 </div>
-<p class="subtitle">Preencha os dados do seu projeto. Use o 🎤 para ditar.</p>
+<p class="subtitle">Preencha os dados do seu projeto. Use o 🎤 para ditar os textos longos.</p>
 
 <form id="projetoForm">
   <h2>Dados do Projeto</h2>
@@ -62,25 +62,31 @@
 <script>
 const supabaseUrl = 'https://zqwzcfarpexciiajiigp.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxd3pjZmFycGV4Y2lpYWppaWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNjAzODMsImV4cCI6MjEwNTgzNjM4M30.0FPbUKWIL06kOJxvBrm2RDDIfkyjq3S_Tos-mVyrZmw';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+const sb = supabase.createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: true,
+    storageKey: 'sistema-capta-auth-token',
+    storage: window.localStorage
+  }
+});
 
 let currentUser = null;
 let projectId = null;
 
 async function init() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await sb.auth.getSession();
   if (!session) {
     window.location.href = 'login.html';
     return;
   }
   currentUser = session.user;
 
-  // Tenta buscar um projeto existente para este cliente
-  const { data: projects } = await supabase
+  const { data: projects, error } = await sb
     .from('projects')
     .select('id, nome, descricao, publico_alvo, territorio, custo_estimado, objetivo_geral')
     .eq('client_id', currentUser.id)
-    .single();
+    .maybeSingle();
 
   if (projects) {
     projectId = projects.id;
@@ -106,11 +112,11 @@ async function salvarProjeto() {
 
   let error;
   if (projectId) {
-    const res = await supabase.from('projects').update(dados).eq('id', projectId);
+    const res = await sb.from('projects').update(dados).eq('id', projectId);
     error = res.error;
   } else {
-    const res = await supabase.from('projects').insert([dados]).select();
-    if (res.data) projectId = res.data[0].id;
+    const res = await sb.from('projects').insert([dados]).select();
+    if (res.data && res.data.length > 0) projectId = res.data[0].id;
     error = res.error;
   }
 
@@ -124,11 +130,10 @@ async function salvarProjeto() {
 }
 
 async function fazerLogout() {
-  await supabase.auth.signOut();
+  await sb.auth.signOut();
   window.location.href = 'login.html';
 }
 
-// --- FUNÇÃO DE DITADO POR VOZ ---
 function iniciarVoz(campoId) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
@@ -147,7 +152,6 @@ function iniciarVoz(campoId) {
   recognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
     const textarea = document.getElementById(campoId);
-    // Adiciona ao texto existente ou substitui
     textarea.value = textarea.value ? textarea.value + ' ' + transcript : transcript;
     statusEl.textContent = '✓ Texto adicionado!';
     setTimeout(() => statusEl.style.display = 'none', 2000);

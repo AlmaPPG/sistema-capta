@@ -27,7 +27,15 @@
 <script>
 const supabaseUrl = 'https://zqwzcfarpexciiajiigp.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxd3pjZmFycGV4Y2lpYWppaWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNjAzODMsImV4cCI6MjEwNTgzNjM4M30.0FPbUKWIL06kOJxvBrm2RDDIfkyjq3S_Tos-mVyrZmw';
-const sb = supabase.createClient(supabaseUrl, supabaseKey);
+
+// PADRÃO: O cofre agora é o mesmo do admin.html
+const sb = supabase.createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: true,
+    storageKey: 'sistema-capta-auth-token',
+    storage: window.localStorage
+  }
+});
 
 async function fazerLogin() {
   const email = document.getElementById('email').value;
