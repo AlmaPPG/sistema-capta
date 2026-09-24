@@ -34,14 +34,63 @@ const sb = supabase.createClient(supabaseUrl, supabaseKey, {
 });
 
 async function init() {
-  // Verifica se há uma sessão ativa
   const { data: { session } } = await sb.auth.getSession();
   
   if (!session) {
-    // Se não houver sessão, manda de volta para o login
     window.location.href = 'login.html';
     return;
   }
+
+  // Verifica se tem 2FA configurado
+  const { data: user2fa } = await sb.from('user_2fa').select('enabled').eq('user_id', session.user.id).maybeSingle();
+  
+  if (!user2fa || !user2fa.enabled) {
+    // Não tem 2FA, redireciona para configuração
+    window.location.href = 'configurar-2fa.html';
+    return;
+  }
+
+  document.getElementById('loading').textContent = 'Buscando projetos...';
+
+  const { data: projects, error } = await sb
+    .from('projects')
+    .select(`
+      id,
+      nome,
+      status,
+      clients ( nome, email )
+    `);
+
+  document.getElementById('loading').style.display = 'none';
+
+  if (error) {
+    document.getElementById('conteudo').innerHTML = `<p style="color: var(--danger)">Erro ao carregar: ${error.message}</p>`;
+    return;
+  }
+
+  if (!projects || projects.length === 0) {
+    document.getElementById('conteudo').innerHTML = '<p class="empty-state">Nenhum projeto cadastrado ainda.</p>';
+    return;
+  }
+
+  let html = '<h2>Projetos Ativos</h2>';
+  projects.forEach(p => {
+    html += `
+      <div class="card">
+        <h3>${p.nome || 'Sem nome'}</h3>
+        <p><strong>Cliente:</strong> ${p.clients?.nome || 'N/A'} (${p.clients?.email || 'N/A'})</p>
+        <p><strong>Status:</strong> ${p.status || 'Em desenvolvimento'}</p>
+      </div>
+    `;
+  });
+  
+  document.getElementById('conteudo').innerHTML = html;
+}
+
+
+
+
+
 
   document.getElementById('loading').textContent = 'Buscando projetos...';
 
