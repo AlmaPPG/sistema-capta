@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Captação · Do papel pra vida</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .hero {
+    text-align: center;
+    padding: 80px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .hero h1 {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .hero p {
+    font-size: 1.3rem;
+    color: var(--text-soft);
+    margin-bottom: 32px;
+  }
+  .hero .btn-primary {
+    font-size: 1.2rem;
+    padding: 16px 32px;
+  }
+  
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+  .section h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+  
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 32px;
+    margin-top: 40px;
+  }
+  .step {
+    text-align: center;
+    padding: 24px;
+  }
+  .step-number {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  .step h3 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+  .step p {
+    color: var(--text-soft);
+    font-size: 1rem;
+  }
+  
+  .benefits {
+    background: var(--bg-soft);
+    padding: 60px 20px;
+    margin: 40px 0;
+  }
+  .benefits-list {
+    max-width: 700px;
+    margin: 0 auto;
+    display: grid;
+    gap: 20px;
+  }
+  .benefit-item {
+    display: flex;
+    align-items: start;
+    gap: 16px;
+    font-size: 1.1rem;
+  }
+  .benefit-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  
+  .cta-final {
+    text-align: center;
+    padding: 80px 20px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .cta-final h2 {
+    font-size: 2.2rem;
+    margin-bottom: 24px;
+  }
+  .cta-final p {
+    font-size: 1.2rem;
+    color: var(--text-soft);
+    margin-bottom: 32px;
+  }
+  
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-soft);
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 2rem; }
+    .hero p { font-size: 1.1rem; }
+    .section h2 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Do papel pra vida.</h1>
+  <p>Organize seus projetos, desmistifique a captação de recursos e transforme sonhos em realidade.</p>
+  <a href="cadastro.html" class="btn-primary">Criar minha conta gratuitamente</a>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="section">
+  <h2>Como funciona</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">1</div>
+      <h3>Cadastre-se gratuitamente</h3>
+      <p>Crie sua conta em segundos. Sem complicação, sem burocracia.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <h3>Organize suas informações</h3>
+      <p>Preencha os dados do seu projeto. Pode até ditar por voz se preferir!</p>
+    </div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <h3>Esteja pronto para oportunidades</h3>
+      <p>Quando aparecer um edital, você já tem tudo organizado e pronto para submeter.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFÍCIOS -->
+<section class="benefits">
+  <div class="section" style="padding: 0;">
+    <h2>Por que usar o sistema</h2>
+    <div class="benefits-list">
+      <div class="benefit-item">
+        <span class="benefit-icon">✅</span>
+        <span>Seus projetos deixam de ficar engavetados</span>
+      </div>
+      <div class="benefit-item">
+        <span class="benefit-icon">📁</span>
+        <span>Informações organizadas em um só lugar</span>
+      </div>
+      <div class="benefit-item">
+        <span class="benefit-icon">🎯</span>
+        <span>Pronto para quando a oportunidade aparecer</span>
+      </div>
+      <div class="benefit-item">
+        <span class="benefit-icon">🎤</span>
+        <span>Interface simples, com ditado por voz</span>
+      </div>
+      <div class="benefit-item">
+        <span class="benefit-icon">🔒</span>
+        <span>Seus dados protegidos e isolados</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>A organização ideal dos seus projetos começa aqui.</h2>
+  <p>Mude o status dos seus projetos de "engavetado" para "realizado".</p>
+  <a href="cadastro.html" class="btn-primary">Começar agora</a>
+</section>
+
+<!-- RODAPÉ -->
+<footer>
+  <p>Sistema de Captação · Do sonho à realização</p>
+  <p style="margin-top: 8px;">
+    <a href="login.html" style="color: var(--accent); text-decoration: none;">Já tem conta? Faça login</a>
+  </p>
+</footer>
+
+</body>
+</html>

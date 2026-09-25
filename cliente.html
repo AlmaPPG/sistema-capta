@@ -3,129 +3,335 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meu Projeto · Sistema de Captação</title>
+<title>Meus Projetos · Sistema de Captação</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  #tela-carregamento { text-align: center; margin-top: 20vh; }
+  .section-divider { border-top: 1px solid var(--border); margin: 32px 0 24px 0; }
+  .hidden { display: none !important; }
+</style>
 </head>
 <body>
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  <h1>💡 Meu Projeto</h1>
-  <button class="btn-secondary" onclick="fazerLogout()">Sair</button>
+<div id="tela-carregamento">
+  <h2>🔒 Verificando acesso...</h2>
 </div>
-<p class="subtitle">Preencha os dados do seu projeto. Use o 🎤 para ditar os textos longos.</p>
 
-<form id="projetoForm">
-  <h2>Dados do Projeto</h2>
+<!-- VISÃO 1: LISTA DE PROJETOS -->
+<div id="listaView" class="hidden">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h1>💡 Meus Projetos</h1>
+    <button class="btn-secondary" onclick="fazerLogout()">Sair</button>
+  </div>
   
-  <div class="field">
-    <label for="nome">Nome do Projeto</label>
-    <input type="text" id="nome" name="nome">
+  <button class="btn-primary" style="width: 100%; margin-bottom: 24px;" onclick="novoProjeto()">+ Novo Projeto</button>
+  
+  <div id="lista-projetos"></div>
+</div>
+
+<!-- VISÃO 2: FORMULÁRIO DO PROJETO -->
+<div id="formView" class="hidden">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <button class="btn-secondary" onclick="voltarParaLista()" style="padding: 8px 16px;">← Voltar para a lista</button>
+    <button class="btn-secondary" onclick="fazerLogout()">Sair</button>
   </div>
 
-  <div class="field">
-    <label for="descricao">
-      Descrição do Projeto
-      <button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 14px; min-height: 32px; margin-left: 8px;" onclick="iniciarVoz('descricao')">🎤 Ditar</button>
-    </label>
-    <textarea id="descricao" name="descricao" placeholder="Descreva o que é o projeto..."></textarea>
-    <span id="status-voz" style="font-size: 14px; color: var(--accent); display: none;">Ouvindo...</span>
-  </div>
+  <h2 id="form-titulo">Novo Projeto</h2>
+  <p class="subtitle">Preencha os dados abaixo. Use o 🎤 para ditar os textos longos.</p>
 
-  <div class="row">
-    <div class="field">
-      <label for="publico_alvo">Público-alvo</label>
-      <input type="text" id="publico_alvo" name="publico_alvo">
+  <form id="dadosForm">
+    <h3>🏛️ Dados da Instituição</h3>
+    <div class="row">
+      <div class="field">
+        <label for="inst_nome">Nome da Instituição</label>
+        <input type="text" id="inst_nome">
+      </div>
+      <div class="field">
+        <label for="inst_cnpj">CNPJ</label>
+        <input type="text" id="inst_cnpj" placeholder="00.000.000/0000-00">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="inst_tipo">Tipo Jurídico</label>
+        <select id="inst_tipo">
+          <option value="">Selecione</option>
+          <option value="OSC">OSC</option>
+          <option value="Associação">Associação</option>
+          <option value="Fundação">Fundação</option>
+          <option value="Coletivo">Coletivo</option>
+          <option value="Empresa">Empresa</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="inst_causa">Causa/Área de Atuação</label>
+        <input type="text" id="inst_causa" placeholder="Ex: Cultura, Educação, Esporte">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="inst_estado">Estado</label>
+        <input type="text" id="inst_estado">
+      </div>
+      <div class="field">
+        <label for="inst_municipio">Município</label>
+        <input type="text" id="inst_municipio">
+      </div>
     </div>
     <div class="field">
-      <label for="territorio">Território</label>
-      <input type="text" id="territorio" name="territorio">
+      <label for="inst_endereco">Endereço Completo</label>
+      <input type="text" id="inst_endereco">
     </div>
-  </div>
 
-  <div class="field">
-    <label for="custo_estimado">Custo Estimado (R$)</label>
-    <input type="number" id="custo_estimado" name="custo_estimado" step="0.01">
-  </div>
+    <h4>📁 Pasta Viva (Documentos)</h4>
+    <div class="checkbox-group"><input type="checkbox" id="doc_estatuto"><label for="doc_estatuto">Estatuto Social registrado</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="doc_cnpj"><label for="doc_cnpj">Comprovante de CNPJ ativo</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="doc_cnd_federal"><label for="doc_cnd_federal">CND Federal (Receita/PGFN)</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="doc_cnd_estadual"><label for="doc_cnd_estadual">CND Estadual</label></div>
+    <div class="checkbox-group"><input type="checkbox" id="doc_cnd_municipal"><label for="doc_cnd_municipal">CND Municipal</label></div>
 
-  <div class="field">
-    <label for="objetivo_geral">Objetivo Geral</label>
-    <textarea id="objetivo_geral" name="objetivo_geral"></textarea>
-  </div>
+    <div class="section-divider"></div>
 
-  <div class="actions">
-    <button type="button" class="btn-primary" onclick="salvarProjeto()">💾 Salvar Projeto</button>
-  </div>
-  <p id="msg-salvar" style="text-align: center; color: var(--success); display: none;">✓ Salvo com sucesso!</p>
-</form>
+    <h3>💡 Dados do Projeto</h3>
+    <div class="field">
+      <label for="proj_nome">Nome do Projeto</label>
+      <input type="text" id="proj_nome">
+    </div>
+
+    <div class="field">
+      <label for="proj_descricao">
+        Descrição do Projeto
+        <button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 14px; min-height: 32px; margin-left: 8px;" onclick="iniciarVoz('proj_descricao')">🎤 Ditar</button>
+      </label>
+      <textarea id="proj_descricao" placeholder="Descreva o que é o projeto, o que será feito e para quem..."></textarea>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="proj_publico">Público-alvo</label>
+        <input type="text" id="proj_publico" placeholder="Ex: 40 educadores dos anos iniciais">
+      </div>
+      <div class="field">
+        <label for="proj_territorio">Território de Execução</label>
+        <input type="text" id="proj_territorio" placeholder="Ex: Manacapuru/AM">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="proj_custo">Custo Estimado Total (R$)</label>
+      <input type="number" id="proj_custo" step="0.01" placeholder="0.00">
+    </div>
+
+    <div class="field">
+      <label for="proj_obj_geral">
+        Objetivo Geral
+        <button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 14px; min-height: 32px; margin-left: 8px;" onclick="iniciarVoz('proj_obj_geral')">🎤 Ditar</button>
+      </label>
+      <textarea id="proj_obj_geral" placeholder="Qual o impacto principal que o projeto busca gerar?"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="proj_obj_especificos">
+        Objetivos Específicos (3 a 5)
+        <button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 14px; min-height: 32px; margin-left: 8px;" onclick="iniciarVoz('proj_obj_especificos')">🎤 Ditar</button>
+      </label>
+      <textarea id="proj_obj_especificos" placeholder="1. Capacitar... 2. Produzir... 3. Disseminar..."></textarea>
+    </div>
+
+    <div class="field">
+      <label for="proj_resultado">
+        Resultado Esperado (Meta + Indicador)
+        <button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 14px; min-height: 32px; margin-left: 8px;" onclick="iniciarVoz('proj_resultado')">🎤 Ditar</button>
+      </label>
+      <textarea id="proj_resultado" placeholder="Ex: 80% dos participantes aprovados na avaliação final."></textarea>
+    </div>
+
+    <div class="field">
+      <label for="proj_contrapartida">
+        Contrapartida Possível
+        <button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 14px; min-height: 32px; margin-left: 8px;" onclick="iniciarVoz('proj_contrapartida')">🎤 Ditar</button>
+      </label>
+      <textarea id="proj_contrapartida" placeholder="O que a instituição pode oferecer como contrapartida?"></textarea>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-primary" onclick="salvarTudo()">💾 Salvar Projeto</button>
+      <button type="button" class="btn-secondary" onclick="voltarParaLista()">Cancelar</button>
+    </div>
+    <p id="msg-salvar" style="text-align: center; color: var(--success); display: none; font-weight: bold; margin-top: 12px;">✓ Dados salvos com sucesso!</p>
+  </form>
+</div>
+
+<span id="status-voz" style="position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white; padding: 10px 16px; border-radius: 6px; font-size: 14px; display: none; z-index: 1000;">🎤 Ouvindo...</span>
 
 <script>
 const supabaseUrl = 'https://zqwzcfarpexciiajiigp.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxd3pjZmFycGV4Y2lpYWppaWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNjAzODMsImV4cCI6MjEwNTgzNjM4M30.0FPbUKWIL06kOJxvBrm2RDDIfkyjq3S_Tos-mVyrZmw';
 
 const sb = supabase.createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    persistSession: true,
-    storageKey: 'sistema-capta-auth-token',
-    storage: window.localStorage
-  }
+  auth: { persistSession: true, storageKey: 'sistema-capta-auth-token', storage: window.localStorage }
 });
 
 let currentUser = null;
-let projectId = null;
+let projetoAtualId = null;
+let instituicaoAtualId = null;
 
 async function init() {
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) {
-    window.location.href = 'login.html';
-    return;
-  }
+  if (!session) { window.location.href = 'login.html'; return; }
   currentUser = session.user;
-
-  const { data: projects, error } = await sb
-    .from('projects')
-    .select('id, nome, descricao, publico_alvo, territorio, custo_estimado, objetivo_geral')
-    .eq('client_id', currentUser.id)
-    .maybeSingle();
-
-  if (projects) {
-    projectId = projects.id;
-    document.getElementById('nome').value = projects.nome || '';
-    document.getElementById('descricao').value = projects.descricao || '';
-    document.getElementById('publico_alvo').value = projects.publico_alvo || '';
-    document.getElementById('territorio').value = projects.territorio || '';
-    document.getElementById('custo_estimado').value = projects.custo_estimado || '';
-    document.getElementById('objetivo_geral').value = projects.objetivo_geral || '';
-  }
+  
+  document.getElementById('tela-carregamento').style.display = 'none';
+  carregarLista();
 }
 
-async function salvarProjeto() {
-  const dados = {
+async function carregarLista() {
+  document.getElementById('listaView').classList.remove('hidden');
+  document.getElementById('formView').classList.add('hidden');
+  
+  const { data: projetos, error } = await sb.from('projects').select('id, nome, status, created_at').eq('client_id', currentUser.id).order('created_at', { ascending: false });
+  
+  const divLista = document.getElementById('lista-projetos');
+  divLista.innerHTML = '';
+  
+  if (!projetos || projetos.length === 0) {
+    divLista.innerHTML = '<p class="empty-state">Você ainda não tem projetos cadastrados.<br>Clique em "+ Novo Projeto" para começar.</p>';
+    return;
+  }
+  
+  projetos.forEach(p => {
+    const statusFormatado = p.status ? p.status.replace('_', ' ') : 'Em desenvolvimento';
+    divLista.innerHTML += `
+      <div class="card" onclick="editarProjeto('${p.id}')">
+        <h3>${p.nome || 'Projeto sem nome'}</h3>
+        <p><strong>Status:</strong> ${statusFormatado}</p>
+        <p style="font-size: 13px; color: var(--text-soft);">Clique para editar ou visualizar</p>
+      </div>
+    `;
+  });
+}
+
+function novoProjeto() {
+  projetoAtualId = null;
+  instituicaoAtualId = null;
+  document.getElementById('dadosForm').reset();
+  document.getElementById('form-titulo').textContent = 'Novo Projeto';
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+}
+
+async function editarProjeto(id) {
+  projetoAtualId = id;
+  document.getElementById('form-titulo').textContent = 'Editar Projeto';
+  document.getElementById('msg-salvar').style.display = 'none';
+  
+  // Busca dados do projeto
+  const { data: proj } = await sb.from('projects').select('*').eq('id', id).single();
+  if (proj) {
+    document.getElementById('proj_nome').value = proj.nome || '';
+    document.getElementById('proj_descricao').value = proj.descricao || '';
+    document.getElementById('proj_publico').value = proj.publico_alvo || '';
+    document.getElementById('proj_territorio').value = proj.territorio || '';
+    document.getElementById('proj_custo').value = proj.custo_estimado || '';
+    document.getElementById('proj_obj_geral').value = proj.objetivo_geral || '';
+    document.getElementById('proj_obj_especificos').value = proj.objetivos_especificos || '';
+    document.getElementById('proj_resultado').value = proj.resultado_esperado || '';
+    document.getElementById('proj_contrapartida').value = proj.contrapartida_possivel || '';
+  }
+  
+  // Busca dados da instituição vinculada a este cliente
+  const { data: inst } = await sb.from('institutions').select('*').eq('client_id', currentUser.id).maybeSingle();
+  if (inst) {
+    instituicaoAtualId = inst.id;
+    document.getElementById('inst_nome').value = inst.nome || '';
+    document.getElementById('inst_cnpj').value = inst.cnpj || '';
+    document.getElementById('inst_tipo').value = inst.tipo_juridico || '';
+    document.getElementById('inst_causa').value = inst.causa || '';
+    document.getElementById('inst_estado').value = inst.estado || '';
+    document.getElementById('inst_municipio').value = inst.municipio || '';
+    document.getElementById('inst_endereco').value = inst.endereco || '';
+    
+    const docs = inst.documentos || {};
+    document.getElementById('doc_estatuto').checked = docs.estatuto || false;
+    document.getElementById('doc_cnpj').checked = docs.cnpj_ativo || false;
+    document.getElementById('doc_cnd_federal').checked = docs.cnd_federal || false;
+    document.getElementById('doc_cnd_estadual').checked = docs.cnd_estadual || false;
+    document.getElementById('doc_cnd_municipal').checked = docs.cnd_municipal || false;
+  }
+  
+  document.getElementById('listaView').classList.add('hidden');
+  document.getElementById('formView').classList.remove('hidden');
+}
+
+function voltarParaLista() {
+  carregarLista();
+}
+
+async function salvarTudo() {
+  const msg = document.getElementById('msg-salvar');
+  msg.style.display = 'block';
+  msg.style.color = '#787774';
+  msg.textContent = 'Salvando...';
+
+  // 1. Salvar/Atualizar Instituição (simplificado: 1 instituição por cliente por enquanto)
+  const instDados = {
     client_id: currentUser.id,
-    nome: document.getElementById('nome').value,
-    descricao: document.getElementById('descricao').value,
-    publico_alvo: document.getElementById('publico_alvo').value,
-    territorio: document.getElementById('territorio').value,
-    custo_estimado: document.getElementById('custo_estimado').value || null,
-    objetivo_geral: document.getElementById('objetivo_geral').value
+    nome: document.getElementById('inst_nome').value,
+    cnpj: document.getElementById('inst_cnpj').value,
+    tipo_juridico: document.getElementById('inst_tipo').value,
+    causa: document.getElementById('inst_causa').value,
+    estado: document.getElementById('inst_estado').value,
+    municipio: document.getElementById('inst_municipio').value,
+    endereco: document.getElementById('inst_endereco').value,
+    documentos: {
+      estatuto: document.getElementById('doc_estatuto').checked,
+      cnpj_ativo: document.getElementById('doc_cnpj').checked,
+      cnd_federal: document.getElementById('doc_cnd_federal').checked,
+      cnd_estadual: document.getElementById('doc_cnd_estadual').checked,
+      cnd_municipal: document.getElementById('doc_cnd_municipal').checked
+    }
+  };
+
+  if (instituicaoAtualId) {
+    await sb.from('institutions').update(instDados).eq('id', instituicaoAtualId);
+  } else {
+    const res = await sb.from('institutions').insert([instDados]).select();
+    if (res.data) instituicaoAtualId = res.data[0].id;
+  }
+
+  // 2. Salvar/Atualizar Projeto
+  const projDados = {
+    client_id: currentUser.id,
+    nome: document.getElementById('proj_nome').value,
+    descricao: document.getElementById('proj_descricao').value,
+    publico_alvo: document.getElementById('proj_publico').value,
+    territorio: document.getElementById('proj_territorio').value,
+    custo_estimado: document.getElementById('proj_custo').value || null,
+    objetivo_geral: document.getElementById('proj_obj_geral').value,
+    objetivos_especificos: document.getElementById('proj_obj_especificos').value,
+    resultado_esperado: document.getElementById('proj_resultado').value,
+    contrapartida_possivel: document.getElementById('proj_contrapartida').value,
+    status: 'em_desenvolvimento'
   };
 
   let error;
-  if (projectId) {
-    const res = await sb.from('projects').update(dados).eq('id', projectId);
+  if (projetoAtualId) {
+    const res = await sb.from('projects').update(projDados).eq('id', projetoAtualId);
     error = res.error;
   } else {
-    const res = await sb.from('projects').insert([dados]).select();
-    if (res.data && res.data.length > 0) projectId = res.data[0].id;
+    const res = await sb.from('projects').insert([projDados]).select();
+    if (res.data) projetoAtualId = res.data[0].id;
     error = res.error;
   }
 
   if (error) {
-    alert('Erro ao salvar: ' + error.message);
+    msg.style.color = '#e03e3e';
+    msg.textContent = 'Erro ao salvar: ' + error.message;
   } else {
-    const msg = document.getElementById('msg-salvar');
-    msg.style.display = 'block';
-    setTimeout(() => msg.style.display = 'none', 2000);
+    msg.style.color = '#4dab5c';
+    msg.textContent = '✓ Dados salvos com sucesso!';
+    setTimeout(() => { msg.style.display = 'none'; voltarParaLista(); }, 1500);
   }
 }
 
@@ -140,34 +346,26 @@ function iniciarVoz(campoId) {
     alert('Seu navegador não suporta reconhecimento de voz. Tente usar o Google Chrome.');
     return;
   }
-
   const recognition = new SpeechRecognition();
   recognition.lang = 'pt-BR';
   recognition.interimResults = false;
-
   const statusEl = document.getElementById('status-voz');
   statusEl.style.display = 'block';
   statusEl.textContent = '🎤 Ouvindo... Fale agora.';
 
   recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
     const textarea = document.getElementById(campoId);
-    textarea.value = textarea.value ? textarea.value + ' ' + transcript : transcript;
+    textarea.value = textarea.value ? textarea.value + ' ' + event.results[0][0].transcript : event.results[0][0].transcript;
     statusEl.textContent = '✓ Texto adicionado!';
     setTimeout(() => statusEl.style.display = 'none', 2000);
   };
-
-  recognition.onerror = (event) => {
-    statusEl.textContent = '❌ Erro no reconhecimento. Tente novamente.';
+  recognition.onerror = () => {
+    statusEl.textContent = '❌ Erro. Tente novamente.';
     setTimeout(() => statusEl.style.display = 'none', 2000);
   };
-
   recognition.onend = () => {
-    if (statusEl.textContent.includes('Ouvindo')) {
-      statusEl.style.display = 'none';
-    }
+    if (statusEl.textContent.includes('Ouvindo')) statusEl.style.display = 'none';
   };
-
   recognition.start();
 }
 
