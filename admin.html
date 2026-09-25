@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel Admin · Sistema de Captação</title>
 <link rel="stylesheet" href="style.css">
-<!-- Carrega a biblioteca do Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -23,8 +22,6 @@
 const supabaseUrl = 'https://zqwzcfarpexciiajiigp.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxd3pjZmFycGV4Y2lpYWppaWdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNjAzODMsImV4cCI6MjEwNTgzNjM4M30.0FPbUKWIL06kOJxvBrm2RDDIfkyjq3S_Tos-mVyrZmw';
 
-// Usamos 'sb' para evitar conflito com a variável global da biblioteca
-// E configuramos explicitamente o localStorage para evitar bloqueios de "Tracking Prevention"
 const sb = supabase.createClient(supabaseUrl, supabaseKey, {
   auth: {
     persistSession: true,
@@ -45,7 +42,6 @@ async function init() {
   const { data: user2fa } = await sb.from('user_2fa').select('enabled').eq('user_id', session.user.id).maybeSingle();
   
   if (!user2fa || !user2fa.enabled) {
-    // Não tem 2FA, redireciona para configuração
     window.location.href = 'configurar-2fa.html';
     return;
   }
@@ -87,55 +83,11 @@ async function init() {
   document.getElementById('conteudo').innerHTML = html;
 }
 
-
-
-
-
-
-  document.getElementById('loading').textContent = 'Buscando projetos...';
-
-  // Busca todos os projetos e os dados do cliente vinculado
-  const { data: projects, error } = await sb
-    .from('projects')
-    .select(`
-      id,
-      nome,
-      status,
-      clients ( nome, email )
-    `);
-
-  document.getElementById('loading').style.display = 'none';
-
-  if (error) {
-    document.getElementById('conteudo').innerHTML = `<p style="color: var(--danger)">Erro ao carregar: ${error.message}</p>`;
-    return;
-  }
-
-  if (!projects || projects.length === 0) {
-    document.getElementById('conteudo').innerHTML = '<p class="empty-state">Nenhum projeto cadastrado ainda.</p>';
-    return;
-  }
-
-  let html = '<h2>Projetos Ativos</h2>';
-  projects.forEach(p => {
-    html += `
-      <div class="card">
-        <h3>${p.nome || 'Sem nome'}</h3>
-        <p><strong>Cliente:</strong> ${p.clients?.nome || 'N/A'} (${p.clients?.email || 'N/A'})</p>
-        <p><strong>Status:</strong> ${p.status || 'Em desenvolvimento'}</p>
-      </div>
-    `;
-  });
-  
-  document.getElementById('conteudo').innerHTML = html;
-}
-
 async function fazerLogout() {
   await sb.auth.signOut();
   window.location.href = 'login.html';
 }
 
-// Inicia o painel
 init();
 </script>
 </body>
