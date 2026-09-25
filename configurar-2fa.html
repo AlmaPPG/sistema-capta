@@ -6,8 +6,8 @@
 <title>Configurar 2FA · Sistema de Captação</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- Biblioteca para gerar QR Code -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<!-- Biblioteca QRCode mais estável -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body style="max-width: 500px; margin-top: 5vh;">
 
@@ -68,7 +68,6 @@ async function init() {
   const { data: existing } = await sb.from('user_2fa').select('enabled').eq('user_id', session.user.id).maybeSingle();
   
   if (existing && existing.enabled) {
-    // Já tem 2FA, vai direto pro admin
     window.location.href = 'admin.html';
     return;
   }
@@ -76,12 +75,20 @@ async function init() {
   // Gera um secret aleatório para TOTP
   totpSecret = gerarSecret();
   
-  // Gera QR Code
+  // Gera QR Code usando a biblioteca qrcodejs
   const otpauthUrl = `otpauth://totp/SistemaCapta:${session.user.email}?secret=${totpSecret}&issuer=SistemaCapta`;
-  QRCode.toCanvas(document.createElement('canvas'), otpauthUrl, { width: 200 }, (error, canvas) => {
-    if (!error) {
-      document.getElementById('qrcode').appendChild(canvas);
-    }
+  
+  // Limpa o container antes de gerar
+  document.getElementById('qrcode').innerHTML = '';
+  
+  // Gera o QR Code
+  new QRCode(document.getElementById('qrcode'), {
+    text: otpauthUrl,
+    width: 200,
+    height: 200,
+    colorDark: '#000000',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
   });
   
   document.getElementById('secret-key').textContent = totpSecret;
@@ -111,10 +118,6 @@ async function verificarCodigo() {
     return;
   }
 
-  // Aqui deveria verificar o TOTP, mas como não temos biblioteca de TOTP no browser,
-  // vamos aceitar qualquer código de 6 dígitos por enquanto
-  // Em produção, isso seria verificado no backend
-  
   msg.style.color = '#787774';
   msg.textContent = 'Verificando...';
 
