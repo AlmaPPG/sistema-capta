@@ -6,7 +6,6 @@
 <title>Login · Sistema de Captação</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- Carrega o hCaptcha -->
 <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
 <body style="max-width: 400px; margin-top: 10vh;">
@@ -23,8 +22,7 @@
   <input type="password" id="password" placeholder="Sua senha">
 </div>
 
-<!-- hCaptcha Widget -->
-<div class="h-captcha" data-sitekey="fc06c00e-a862-4bbc-b86e-f33876f45680"></div>
+<div class="h-captcha" data-sitekey="COLE_SUA_SITE_KEY_AQUI"></div>
 
 <button class="btn-primary" style="width: 100%; margin-top: 16px;" onclick="fazerLogin()">Entrar</button>
 <p id="msg" style="margin-top: 16px; text-align: center; font-weight: bold;"></p>
@@ -46,7 +44,6 @@ async function fazerLogin() {
   const password = document.getElementById('password').value;
   const msg = document.getElementById('msg');
   
-  // Verifica se o hCaptcha foi resolvido
   const hcaptchaToken = hcaptcha.getResponse();
   if (!hcaptchaToken) {
     msg.style.color = '#e03e3e';
@@ -68,15 +65,10 @@ async function fazerLogin() {
   if (error) {
     msg.style.color = '#e03e3e';
     msg.textContent = 'Erro: ' + error.message;
-    // Reseta o captcha para tentar de novo
     hcaptcha.reset();
   } else {
     msg.style.color = '#4dab5c';
     msg.textContent = 'Sucesso! Redirecionando...';
-    
-    // Verifica se o usuário tem 2FA configurado
-    // Se não tiver, redireciona para configuração
-    // Por enquanto, vamos direto pro admin
     setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
   }
 }
