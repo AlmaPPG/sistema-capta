@@ -38,14 +38,6 @@ async function init() {
     return;
   }
 
-  // Verifica se tem 2FA configurado
-  const { data: user2fa } = await sb.from('user_2fa').select('enabled').eq('user_id', session.user.id).maybeSingle();
-  
-  if (!user2fa || !user2fa.enabled) {
-    window.location.href = 'configurar-2fa.html';
-    return;
-  }
-
   document.getElementById('loading').textContent = 'Buscando projetos...';
 
   const { data: projects, error } = await sb
